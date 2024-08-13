@@ -1,0 +1,47 @@
+[
+  {
+    "emp_id": "emp_id024",
+    "name": "John Doe",
+    "contact": "1234567890",
+    "email": "john.doe@example.com",
+    "designation": "Tech",
+    "image": "john_doe.jpg",
+    "password": "password123"
+  },
+  {
+    "emp_id": "emp_id098",
+    "name": "Jane Smith",
+    "contact": "9876543210",
+    "email": "jane.smith@example.com",
+    "designation": "Management",
+    "image": "jane_smith.jpg",
+    "password": "password456"
+  },
+  {
+    "emp_id": "emp_id014",
+    "name": "Bob Johnson",
+    "contact": "5551234567",
+    "email": "bob.johnson@example.com",
+    "designation": "Business Analyst",
+    "image": "bob_johnson.jpg",
+    "password": "password789"
+  },
+  {
+    "emp_id": "emp_id067",
+    "name": "Alice Brown",
+    "contact": "7778889990",
+    "email": "alice.brown@example.com",
+    "designation": "Tech",
+    "image": "alice_brown.jpg",
+    "password": "password012"
+  },
+  {
+    "emp_id": "emp_id035",
+    "name": "Mike Davis",
+    "contact": "3334445555",
+    "email": "mike.davis@example.com",
+    "designation": "Management",
+    "image": "mike_davis.jpg",
+    "password": "password345"
+  }
+]
