@@ -98,31 +98,31 @@ class _EmployeeDashboardState extends State<EmployeeDashboard> {
                           todayHighlightStyle:
                               TodayHighlightStyle.withBackground),
                     ),
-                    SizedBox(height: 15,),
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        "Hello",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 26,
-                        ),
-                      ),
-                    ),
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        "$empName",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontStyle: FontStyle.italic,
-                          fontSize: 26,
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 25,
-                    ),
+                    SizedBox(height: 20,),
+                    // Align(
+                    //   alignment: Alignment.centerLeft,
+                    //   child: Text(
+                    //     "Hello",
+                    //     style: TextStyle(
+                    //       fontWeight: FontWeight.bold,
+                    //       fontSize: 26,
+                    //     ),
+                    //   ),
+                    // ),
+                    // Align(
+                    //   alignment: Alignment.centerLeft,
+                    //   child: Text(
+                    //     "$empName",
+                    //     style: TextStyle(
+                    //       fontWeight: FontWeight.bold,
+                    //       fontStyle: FontStyle.italic,
+                    //       fontSize: 26,
+                    //     ),
+                    //   ),
+                    // ),
+                    // SizedBox(
+                    //   height: 25,
+                    // ),
                     Container(
                       padding: EdgeInsets.only(bottom: 10),
                       // color: Colors.red,
@@ -140,14 +140,11 @@ class _EmployeeDashboardState extends State<EmployeeDashboard> {
                                       fontSize: 20),
                                 ),
                               ),
-                              IconButton(
+                              TextButton(
                                 onPressed: () {},
-                                icon: CircleAvatar(
-                                  backgroundColor:
-                                      Theme.of(context).secondaryHeaderColor,
-                                  child:
-                                      Icon(Icons.arrow_circle_right_outlined),
-                                ),
+                                child: Text("Show all",style: TextStyle(
+                                  color: Colors.black,fontSize: 15
+                                ),)
                               )
                             ],
                           ),

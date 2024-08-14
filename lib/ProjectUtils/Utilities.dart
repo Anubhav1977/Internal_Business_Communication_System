@@ -90,7 +90,8 @@ class Utility {
         height: MediaQuery.of(context).size.height * 0.1,
         margin: EdgeInsets.only(top: 5, bottom: 15),
         decoration: BoxDecoration(
-          color: Colors.lightBlueAccent,
+          color: Colors.blue.shade200,
+          border: Border.all(width: 3,color: Colors.blue),
           borderRadius: BorderRadius.all(
             Radius.circular(20),
           ),
@@ -127,8 +128,9 @@ class Utility {
                   },
                   icon: CircleAvatar(
                     radius: 15,
-                    backgroundColor: Theme.of(context).secondaryHeaderColor,
+                    backgroundColor: Colors.blue,
                     child: Icon(
+                      // color: ,
                       Icons.arrow_forward_ios_rounded,
                       size: 15,
                     ),
