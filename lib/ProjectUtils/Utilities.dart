@@ -14,7 +14,6 @@ class Utility {
         controller: controller,
         textInputAction: TextInputAction.next,
         decoration: InputDecoration(
-
             prefixIcon: Icon(icon, color: Theme.of(context).primaryColor),
             suffixIcon: isSuffix ? Icon(Icons.remove_red_eye) : null,
             focusedBorder: OutlineInputBorder(
@@ -91,7 +90,7 @@ class Utility {
         height: MediaQuery.of(context).size.height * 0.1,
         margin: EdgeInsets.only(top: 5, bottom: 15),
         decoration: BoxDecoration(
-          color: Colors.blue.shade200,
+          color: Colors.blue.withOpacity(0.5),
           border: Border.all(width: 3,color: Colors.blue),
           borderRadius: BorderRadius.all(
             Radius.circular(20),
@@ -125,7 +124,7 @@ class Utility {
                 right: 15,
                 child: IconButton(
                   onPressed: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => PendingScreen(id: "emp_id024",)));
+                      // Navigator.push(context, MaterialPageRoute(builder: (context) => PendingScreen(id: "emp_id024",)));
                   },
                   icon: CircleAvatar(
                     radius: 15,

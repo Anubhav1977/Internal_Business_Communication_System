@@ -197,4 +197,23 @@ class AppDataBase {
     empList = dbData.map((item) => Employee.fromJson(item)).toList();
     return empList;
   }
+
+  Future getTaskdbInfo(String id) async {
+    Database _db = await getDatabase();
+    List<Task> taskList = [];
+    List<Map<String, dynamic>> dbData =
+    await _db.rawQuery("SELECT * FROM TASK where targetId = ?", [id]);
+    taskList = dbData.map((item) => Task.fromJson(item)).toList();
+    return taskList;
+  }
+
+
+  Future<List<Manager>> getManagerdbInfo(List<String?> managerIds) async {
+    Database _db = await getDatabase();
+    String placeholders = List.filled(managerIds.length, '?').join(',');
+    String sql = "SELECT * FROM MANAGER WHERE mid IN ($placeholders)";
+    List<Map<String, dynamic>> dbData = await _db.rawQuery(sql, managerIds);
+    List<Manager> managerList = dbData.map((item) => Manager.fromJson(item)).toList();
+    return managerList;
+  }
 }
