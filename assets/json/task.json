@@ -3,181 +3,211 @@
     "targetId": "emp_id024",
     "taskName": "Quarterly Sales Report",
     "taskDescription": "Prepare a detailed report on quarterly sales figures",
-    "status": "pending"
+    "status": "pending",
+    "assigned_by": "manager_id042"
   },
   {
     "targetId": "emp_id024",
     "taskName": "Marketing Strategy Review",
     "taskDescription": "Review and revise the marketing strategy for the upcoming quarter",
-    "status": "completed"
+    "status": "completed",
+    "assigned_by": "manager_id042"
   },
   {
     "targetId": "emp_id024",
     "taskName": "Team Meeting",
     "taskDescription": "Schedule and lead a team meeting to discuss ongoing projects",
-    "status": "pending"
+    "status": "pending",
+    "assigned_by": "manager_id091"
   },
   {
     "targetId": "emp_id024",
     "taskName": "Client Onboarding",
     "taskDescription": "Onboard new clients and provide training on our services",
-    "status": "completed"
+    "status": "completed",
+    "assigned_by": "manager_id091"
   },
   {
     "targetId": "emp_id024",
     "taskName": "Budget Review",
     "taskDescription": "Review and revise the budget for the upcoming quarter",
-    "status": "pending"
+    "status": "pending",
+    "assigned_by": "manager_id018"
   },
   {
     "targetId": "emp_id024",
     "taskName": "Performance Evaluation",
     "taskDescription": "Conduct performance evaluations for team members",
-    "status": "completed"
+    "status": "completed",
+    "assigned_by": "manager_id018"
   },
   {
     "targetId": "emp_id098",
     "taskName": "Product Launch Plan",
     "taskDescription": "Develop a plan for the upcoming product launch",
-    "status": "pending"
+    "status": "pending",
+    "assigned_by": "manager_id042"
   },
   {
     "targetId": "emp_id098",
     "taskName": "Competitor Analysis",
     "taskDescription": "Conduct a competitor analysis to identify market trends",
-    "status": "completed"
+    "status": "completed",
+    "assigned_by": "manager_id042"
   },
   {
     "targetId": "emp_id098",
     "taskName": "Customer Feedback Review",
     "taskDescription": "Review customer feedback and implement changes",
-    "status": "pending"
+    "status": "pending",
+    "assigned_by": "manager_id091"
   },
   {
     "targetId": "emp_id098",
     "taskName": "Team Training",
     "taskDescription": "Provide training to team members on new software",
-    "status": "completed"
+    "status": "completed",
+    "assigned_by": "manager_id091"
   },
   {
     "targetId": "emp_id098",
     "taskName": "Project Timeline Review",
     "taskDescription": "Review and revise the project timeline",
-    "status": "pending"
+    "status": "pending",
+    "assigned_by": "manager_id018"
   },
   {
     "targetId": "emp_id098",
     "taskName": "Stakeholder Meeting",
     "taskDescription": "Schedule and lead a meeting with stakeholders",
-    "status": "completed"
+    "status": "completed",
+    "assigned_by": "manager_id018"
   },
   {
     "targetId": "emp_id014",
     "taskName": "HR Policy Review",
     "taskDescription": "Review and revise HR policies",
-    "status": "pending"
+    "status": "pending",
+    "assigned_by": "manager_id042"
   },
   {
     "targetId": "emp_id014",
     "taskName": "Employee Onboarding",
     "taskDescription": "Develop an employee onboarding program",
-    "status": "completed"
+    "status": "completed",
+    "assigned_by": "manager_id042"
   },
   {
     "targetId": "emp_id014",
     "taskName": "Benefits Review",
     "taskDescription": "Review and revise employee benefits",
-    "status": "pending"
+    "status": "pending",
+    "assigned_by": "manager_id091"
   },
   {
     "targetId": "emp_id014",
     "taskName": "Compliance Review",
     "taskDescription": "Conduct a compliance review to ensure regulatory adherence",
-    "status": "completed"
+    "status": "completed",
+    "assigned_by": "manager_id091"
   },
   {
     "targetId": "emp_id014",
     "taskName": "Employee Engagement Survey",
     "taskDescription": "Develop and distribute an employee engagement survey",
-    "status": "pending"
+    "status": "pending",
+    "assigned_by": "manager_id018"
   },
   {
     "targetId": "emp_id014",
     "taskName": "Training Program Development",
     "taskDescription": "Develop a training program for new employees",
-    "status": "completed"
+    "status": "completed",
+    "assigned_by": "manager_id018"
   },
   {
     "targetId": "emp_id067",
     "taskName": "IT Infrastructure Review",
     "taskDescription": "Review and revise the IT infrastructure",
-    "status": "pending"
+    "status": "pending",
+    "assigned_by": "manager_id042"
   },
   {
     "targetId": "emp_id067",
     "taskName": "Cybersecurity Audit",
     "taskDescription": "Conduct a cybersecurity audit to identify vulnerabilities",
-    "status": "completed"
+    "status": "completed",
+    "assigned_by": "manager_id042"
   },
   {
     "targetId": "emp_id067",
     "taskName": "Network Upgrade",
     "taskDescription": "Upgrade the network infrastructure",
-    "status": "pending"
+    "status": "pending",
+    "assigned_by": "manager_id091"
   },
   {
     "targetId": "emp_id067",
     "taskName": "Software Development",
     "taskDescription": "Develop new software features",
-    "status": "completed"
+    "status": "completed",
+    "assigned_by": "manager_id091"
   },
   {
     "targetId": "emp_id067",
     "taskName": "Employee Engagement Survey",
     "taskDescription": "Develop and distribute an employee engagement survey",
-    "status": "pending"
+    "status": "pending",
+    "assigned_by": "manager_id018"
   },
   {
     "targetId": "emp_id067",
     "taskName": "Team Meeting",
     "taskDescription": "Schedule and lead a team meeting to discuss ongoing projects",
-    "status": "pending"
+    "status": "pending",
+    "assigned_by": "manager_id018"
   },
   {
     "targetId": "emp_id035",
     "taskName": "Quarterly Sales Report",
     "taskDescription": "Prepare and submit the quarterly sales report to the management team by the end of the week",
-    "status": "pending"
+    "status": "pending",
+    "assigned_by": "manager_id042"
   },
   {
     "targetId": "emp_id035",
     "taskName": "Marketing Strategy Review",
     "taskDescription": "Review and provide feedback on the marketing strategy document for the upcoming product launch",
-    "status": "completed"
+    "status": "completed",
+    "assigned_by": "manager_id042"
   },
   {
     "targetId": "emp_id035",
     "taskName": "Team Meeting Preparation",
     "taskDescription": "Prepare the agenda and materials for the weekly team meeting",
-    "status": "pending"
+    "status": "pending",
+    "assigned_by": "manager_id091"
   },
   {
     "targetId": "emp_id035",
     "taskName": "Customer Onboarding Process",
     "taskDescription": "Develop and implement a new customer onboarding process to improve customer satisfaction",
-    "status": "completed"
+    "status": "completed",
+    "assigned_by": "manager_id091"
   },
   {
     "targetId": "emp_id035",
     "taskName": "Budget Planning and Forecasting",
     "taskDescription": "Prepare the budget plan and forecast for the next quarter and present to the finance team",
-    "status": "pending"
+    "status": "pending",
+    "assigned_by": "manager_id018"
   },
   {
     "targetId": "emp_id035",
     "taskName": "Process Improvement Initiative",
     "taskDescription": "Research and recommend process improvements to increase efficiency and reduce costs",
-    "status": "completed"
+    "status": "completed",
+    "assigned_by": "manager_id018"
   }
-  ]
+]
 

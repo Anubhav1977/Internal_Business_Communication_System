@@ -11,15 +11,17 @@ class Task {
   String? title;
   String? description;
   String? status;
+  String? assigned_by;
 
-  Task({this.tId, this.title, this.description, this.status});
+  Task({this.tId, this.title, this.description, this.status,this.assigned_by});
 
   factory Task.fromJson(Map<String, dynamic> json) {
     return Task(
         tId: json['targetId'],
         title: json['taskName'],
         description: json['taskDescription'],
-        status: json['status']);
+        status: json['status'],
+        assigned_by: json['assigned_by']);
   }
 
   Future savetask() async {
@@ -42,7 +44,7 @@ class Task {
   Future<int> countTasks() async {
     final db = await AppDataBase().getDatabase();
     final count =
-        Sqflite.firstIntValue(await db.rawQuery('SELECT COUNT(*) FROM TASK'));
+    Sqflite.firstIntValue(await db.rawQuery('SELECT COUNT(*) FROM TASK'));
     return count ?? 0;
   }
 }

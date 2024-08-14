@@ -38,9 +38,11 @@ class _LoginScreenState extends State<LoginScreen> {
               }
               if (state is LoginSuccess) {
                 if (isManager) {
-                  Navigator.pushNamed(context, "/ManagerDashboard");
+                  Navigator.pushNamed(context, "/ManagerDashboard",
+                      arguments: state.id);
                 } else {
-                  Navigator.pushNamed(context, "/EmployeeDashboard");
+                  Navigator.pushNamed(context, "/EmployeeDashboard",
+                      arguments: state.id);
                 }
               }
               if (state is SignupState) {
@@ -54,7 +56,7 @@ class _LoginScreenState extends State<LoginScreen> {
             child: BlocBuilder<LoginBloc, LoginState>(
               builder: (context, state) {
                 return Container(
-                  padding: EdgeInsets.fromLTRB(20, 30, 20, 0),
+                  padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
                   height: MediaQuery.of(context).size.height,
                   width: MediaQuery.of(context).size.width,
                   color: Colors.white,
@@ -67,6 +69,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             "Login Now",
                             style: TextStyle(
                                 fontSize: 26,
+                                fontWeight: FontWeight.bold,
                                 color: Theme.of(context).primaryColor),
                           ),
                         ),
@@ -117,20 +120,17 @@ class _LoginScreenState extends State<LoginScreen> {
                             SizedBox(
                               width: 5,
                             ),
-                            GestureDetector(
-                              onTap: () {},
-                              child: Column(
-                                children: [
-                                  Text(
-                                    "or Log in with",
-                                    style: TextStyle(fontSize: 16),
-                                  ),
-                                  Text(
-                                    "Email",
-                                    style: TextStyle(fontSize: 16),
-                                  ),
-                                ],
-                              ),
+                            Column(
+                              children: [
+                                Text(
+                                  "or Log in with",
+                                  style: TextStyle(fontSize: 16),
+                                ),
+                                Text(
+                                  "Email",
+                                  style: TextStyle(fontSize: 16),
+                                ),
+                              ],
                             ),
                             SizedBox(
                               width: 5,
@@ -279,7 +279,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ),
                         SizedBox(
-                          height: 10,
+                          height: 5,
                         ),
                         Row(
                           children: [
@@ -332,7 +332,11 @@ abstract class LoginEvent {}
 
 class InitialState extends LoginState {}
 
-class LoginSuccess extends LoginState {}
+class LoginSuccess extends LoginState {
+  String? id;
+
+  LoginSuccess({required this.id});
+}
 
 class LoginFailure extends LoginState {}
 
@@ -346,7 +350,11 @@ class PasswordVisibilityState extends LoginState {
   PasswordVisibilityState({required this.isObscure});
 }
 
-class LoginSuccessEvent extends LoginEvent {}
+class LoginSuccessEvent extends LoginEvent {
+  String? id;
+
+  LoginSuccessEvent({required this.id});
+}
 
 class LoginFailureEvent extends LoginEvent {}
 
@@ -379,7 +387,7 @@ class PasswordVisibilityEvent extends LoginEvent {
 // }
 
 void _onLoginSuccessEvent(LoginSuccessEvent event, Emitter<LoginState> emit) {
-  emit(LoginSuccess());
+  emit(LoginSuccess(id: event.id));
 }
 
 void _onLoginFailureEvent(LoginFailureEvent event, Emitter<LoginState> emit) {
@@ -412,7 +420,7 @@ void _onAuthenticateEvent(
   }
 
   if (success) {
-    emit(LoginSuccess());
+    emit(LoginSuccess(id: event.id));
   } else {
     emit(LoginFailure());
   }

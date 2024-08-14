@@ -57,7 +57,7 @@ class _MyAppState extends State<MyApp> {
         "/ManagerDashboard": (context) => ManagerDashboard(),
       },
       debugShowCheckedModeBanner: false,
-      home: HomeScreen(),
+      home: EmployeeDashboard(),
     );
   }
 }

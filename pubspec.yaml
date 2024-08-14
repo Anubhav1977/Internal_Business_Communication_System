@@ -38,6 +38,8 @@ dependencies:
   path_provider: ^2.1.4
   path: ^1.9.0
   http: ^1.2.2
+  syncfusion_flutter_gauges: ^26.2.9
+  easy_date_timeline: ^1.1.3
 
 
 

@@ -100,11 +100,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ),
                                 ),
                                 side: BorderSide(
-                                    color: Theme.of(context).primaryColor), // Pigment Green border
+                                    color: Theme.of(context)
+                                        .primaryColor), // Pigment Green border
                               ),
                               child: FaIcon(FontAwesomeIcons.google,
                                   size: 30,
-                                  color: Theme.of(context).primaryColor), // Pigment Green
+                                  color: Theme.of(context)
+                                      .primaryColor), // Pigment Green
                             ),
                           ),
                           SizedBox(
@@ -124,11 +126,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ),
                                 ),
                                 side: BorderSide(
-                                    color: Theme.of(context).primaryColor), // Pigment Green border
+                                    color: Theme.of(context)
+                                        .primaryColor), // Pigment Green border
                               ),
                               child: FaIcon(FontAwesomeIcons.twitter,
                                   size: 30,
-                                  color: Theme.of(context).primaryColor), // Pigment Green
+                                  color: Theme.of(context)
+                                      .primaryColor), // Pigment Green
                             ),
                           ),
                         ],
@@ -146,26 +150,11 @@ class _HomeScreenState extends State<HomeScreen> {
                           SizedBox(
                             width: 5,
                           ),
-                          GestureDetector(
-                            onTap: () {
-                              context.read<HomeBloc>().add(LoginSuccessEvent());
-                            },
-                            child: Column(
-                              children: [
-                                Text(
-                                  "or Log in with",
-                                  style: TextStyle(
-                                      fontSize: 16,
-                                      color: Color(0xFF1C232B)), // Gunmetal 2
-                                ),
-                                Text(
-                                  "Email",
-                                  style: TextStyle(
-                                      fontSize: 16,
-                                      color: Color(0xFF1C232B)), // Gunmetal 2
-                                ),
-                              ],
-                            ),
+                          Text(
+                            "or Enter using",
+                            style: TextStyle(
+                                fontSize: 16,
+                                color: Color(0xFF1C232B)), // Gunmetal 2
                           ),
                           SizedBox(
                             width: 5,
@@ -185,11 +174,41 @@ class _HomeScreenState extends State<HomeScreen> {
                         height: 60,
                         child: ElevatedButton(
                           onPressed: () {
+                            context.read<HomeBloc>().add(LoginSuccessEvent());
+                          },
+                          style: ElevatedButton.styleFrom(
+                            elevation: 5,
+                            backgroundColor:
+                                Theme.of(context).primaryColor, // Pigment Green
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(10),
+                              ),
+                            ),
+                          ),
+                          child: Text(
+                            "Log In",
+                            style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFFFFFFFF)),
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width,
+                        height: 60,
+                        child: ElevatedButton(
+                          onPressed: () {
                             context.read<HomeBloc>().add(SignupSuccessEvent());
                           },
                           style: ElevatedButton.styleFrom(
                             elevation: 5,
-                            backgroundColor:Theme.of(context).primaryColor, // Pigment Green
+                            backgroundColor:
+                                Theme.of(context).primaryColor, // Pigment Green
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.all(
                                 Radius.circular(10),
@@ -204,32 +223,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                 color: Color(0xFFFFFFFF)),
                           ),
                         ),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Row(
-                        children: [
-                          Text(
-                            "You already have an account?",
-                            style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Color(0xFF1C232B)), // Gunmetal 2
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              context.read<HomeBloc>().add(LoginSuccessEvent());
-                            },
-                            child: Text(
-                              "Login",
-                              style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: Theme.of(context).primaryColor),
-                            ),
-                          ),
-                        ],
                       ),
                     ],
                   );

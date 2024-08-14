@@ -4,7 +4,7 @@
     "mname": "John Doe",
     "mcontact": "0123456789",
     "memail": "john.doe@example.com",
-    "mimage": "https://example.com/john_doe.jpg",
+    "mimage": "",
     "mpassword": "password123"
   },
   {
@@ -12,7 +12,7 @@
     "mname": "Jane Smith",
     "mcontact": "0987654321",
     "memail": "jane.smith@example.com",
-    "mimage": "https://example.com/jane_smith.jpg",
+    "mimage": "",
     "mpassword": "password456"
   },
   {
@@ -20,7 +20,7 @@
     "mname": "Bob Brown",
     "mcontact": "5551234567",
     "memail": "bob.brown@example.com",
-    "mimage": "https://example.com/bob_brown.jpg",
+    "mimage": "",
     "mpassword": "password789"
   }
 ]

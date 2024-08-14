@@ -1,3 +1,5 @@
+// ignore_for_file: no_leading_underscores_for_local_identifiers, avoid_function_literals_in_foreach_calls
+
 import 'dart:io';
 import 'package:inter_business_comm_system/services/Employeeservice.dart';
 import 'package:inter_business_comm_system/services/Managerservice.dart';
@@ -54,7 +56,8 @@ class AppDataBase {
           targetId VARCHAR(10),
           taskName VARCHAR(20),
           taskDescription VARCHAR(300),
-          status VARCHAR(50)
+          status VARCHAR(50),
+          assigned_by VARCHAR(50)
           )
           ''');
         print("Tasks Table Created");
@@ -122,6 +125,7 @@ class AppDataBase {
         "taskName": task.title,
         "taskDescription": task.description,
         "status": task.status,
+        "assigned_by": task.assigned_by
       };
       _batch.insert("TASK", _map);
     });
@@ -176,17 +180,21 @@ class AppDataBase {
   Future uniqueIdCheck(String id) async {
     Database _dbClient = await getDatabase();
 
-    List<Map<String, dynamic>> empResult = await _dbClient.rawQuery(
-        "SELECT emp_id FROM EMP WHERE emp_id = ?",
-        [id]
-    );
-    List<Map<String, dynamic>> managerResult = await _dbClient.rawQuery(
-        "SELECT mid FROM MANAGER WHERE mid = ?",
-        [id]
-    );
+    List<Map<String, dynamic>> empResult = await _dbClient
+        .rawQuery("SELECT emp_id FROM EMP WHERE emp_id = ?", [id]);
+    List<Map<String, dynamic>> managerResult =
+        await _dbClient.rawQuery("SELECT mid FROM MANAGER WHERE mid = ?", [id]);
 
     bool isIdUnique = empResult.isEmpty && managerResult.isEmpty;
     return isIdUnique;
   }
 
+  Future getEmpdbInfo(String id) async {
+    Database _db = await getDatabase();
+    List<Employee> empList = [];
+    List<Map<String, dynamic>> dbData =
+        await _db.rawQuery("SELECT * FROM EMP where emp_id = ?", [id]);
+    empList = dbData.map((item) => Employee.fromJson(item)).toList();
+    return empList;
+  }
 }
