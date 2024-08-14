@@ -14,6 +14,7 @@ class Utility {
         controller: controller,
         textInputAction: TextInputAction.next,
         decoration: InputDecoration(
+
             prefixIcon: Icon(icon, color: Theme.of(context).primaryColor),
             suffixIcon: isSuffix ? Icon(Icons.remove_red_eye) : null,
             focusedBorder: OutlineInputBorder(
