@@ -35,9 +35,9 @@ class Utility {
                 borderSide: BorderSide(color: Theme.of(context).primaryColor),
                 borderRadius: BorderRadius.all(Radius.circular(10))),
             label: Text(label),
-            labelStyle: TextStyle(color: Colors.black),
+            labelStyle: TextStyle(color: Theme.of(context).primaryColor),
             hintText: hint,
-            hintStyle: TextStyle(color: Theme.of(context).primaryColor)),
+            hintStyle: TextStyle(color: Colors.black)),
         keyboardType: textinput,
         validator: (value) {
           if (value!.isEmpty) {
@@ -79,8 +79,9 @@ class Utility {
 
   showSnackbarUtil(BuildContext context, String text,
       {bool isActionButton = false, VoidCallback? onPressed, String? label}) {
-    return ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
+    return ScaffoldMessenger.of(context)
+      ..removeCurrentSnackBar()
+      ..showSnackBar(SnackBar(
         elevation: 5,
         behavior: SnackBarBehavior.floating,
         content: Text(text),
@@ -89,8 +90,7 @@ class Utility {
             ? SnackBarAction(
                 label: label!, textColor: Colors.black, onPressed: onPressed!)
             : null,
-      ),
-    );
+      ));
   }
 
   Widget taskContainerUtil(
@@ -335,10 +335,12 @@ class Utility {
                 border: Border.all(color: Colors.black),
                 image: DecorationImage(
                   fit: BoxFit.cover,
-                  image: FileImage(
-                    File(mngImage ??
-                        "https://img.freepik.com/free-psd/3d-illustration-person-with-sunglasses_23-2149436188.jpg?size=338&ext=jpg&ga=GA1.1.2008272138.1723593600&semt=ais_hybrid"),
-                  ),
+                  image: NetworkImage(mngImage ??
+                      "https://img.freepik.com/free-psd/3d-illustration-person-with-sunglasses_23-2149436188.jpg?size=338&ext=jpg&ga=GA1.1.2008272138.1723593600&semt=ais_hybrid"),
+                  // image: FileImage(
+                  //   File(mngImage ??
+                  //       "https://img.freepik.com/free-psd/3d-illustration-person-with-sunglasses_23-2149436188.jpg?size=338&ext=jpg&ga=GA1.1.2008272138.1723593600&semt=ais_hybrid"),
+                  // ),
                 ),
               ),
             ),

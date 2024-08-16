@@ -20,18 +20,23 @@ class EmployeeDashboard extends StatefulWidget {
 }
 
 class _EmployeeDashboardState extends State<EmployeeDashboard> {
+  // Lists to store data fetched from the database
   List<Employee> empDataList = [];
   List<Task> taskDataList = [];
   List<Task> pendingTaskList = [];
   List<Manager> mngDataList = [];
   List<String?> managerIds = [];
+
+  // Variables to store employee details
   String empName = "";
   String taskTitle = "";
   int totalTasks = 0;
   int completedTasks = 0;
   List<dynamic> taskId = [];
   String? id;
+  bool isLogin = true; // Show loader initially
 
+  // Method to update the task status in the database
   updateTaskStatus(int taskId) async {
     print("Updating task with ID: $taskId");
     Database _db = await AppDataBase().getDatabase();
@@ -49,54 +54,53 @@ class _EmployeeDashboardState extends State<EmployeeDashboard> {
     await fetchData();
   }
 
+  // Method to fetch data from the database
   fetchData() async {
     print("Fetching data for employee ID: $id");
+
+    // Fetch employee data
     empDataList = await AppDataBase().getEmpdbInfo(id!);
+
+    // Fetch task data
     taskDataList = await AppDataBase().getTaskdbInfo(id!);
+
+    // Fetch pending task data
     pendingTaskList = await AppDataBase().getPendingTaskdbInfo(id!);
+
+    // Fetch task IDs
     taskId = await AppDataBase().getTaskId();
     print("Data fetched, total tasks: ${taskDataList.length}");
 
-    empName = empDataList.first.name!;
-    taskTitle = taskDataList.first.title!;
+    // Safeguard against empty lists
+    if (empDataList.isNotEmpty) {
+      empName = empDataList.first.name!;
+    }
+
+    if (taskDataList.isNotEmpty) {
+      taskTitle = taskDataList.first.title!;
+    }
+
     totalTasks = taskDataList.length;
 
     print("Fetching manager data");
+
+    // Fetch manager IDs from tasks
     managerIds = taskDataList.map((task) => task.assigned_by).toList();
+
+    // Fetch manager data based on manager IDs
     mngDataList = await AppDataBase().getManagerdbInfo(managerIds);
     print("Fetched manager data");
 
+    // Calculate completed tasks
     completedTasks =
         taskDataList.where((task) => task.status == 'completed').length;
     print("Completed tasks: $completedTasks");
 
+    // Disable loader and update UI
     setState(() {
-      // Trigger UI update
+      isLogin = false;
     });
   }
-
-  // fetchData() async {
-  //   print("Getting data from db");
-  //   empDataList = await AppDataBase().getEmpdbInfo(id!);
-  //   taskDataList = await AppDataBase().getTaskdbInfo(id!);
-  //   pendingTaskList = await AppDataBase().getPendingTaskdbInfo(id!);
-  //   taskId = await AppDataBase().getTaskId();
-  //   print("data fetched");
-  //   empName = empDataList.first.name!;
-  //   taskTitle = taskDataList.first.title!;
-  //   totalTasks = taskDataList.length;
-  //   print("Fetching manager data");
-  //   managerIds = taskDataList.map((task) => task.assigned_by).toList();
-  //   mngDataList = await AppDataBase().getManagerdbInfo(managerIds);
-  //   print("fetched manager data");
-  //   mngDataList.forEach((ele) {
-  //     print(ele.mname);
-  //   });
-  //   completedTasks =
-  //       taskDataList.where((task) => task.status == 'completed').length;
-  //   print("Fetech Completed");
-  //   setState(() {});
-  // }
 
   @override
   void initState() {
@@ -194,304 +198,324 @@ class _EmployeeDashboardState extends State<EmployeeDashboard> {
         ),
       ),
       body: SafeArea(
-        child: BlocProvider<EmpDashBloc>(
-          create: (context) => EmpDashBloc(),
-          child: BlocBuilder<EmpDashBloc, EmpDashState>(
-            builder: (context, state) {
-              return Container(
-                // padding: EdgeInsets.fromLTRB(15, 20, 15, 0),
-                height: MediaQuery.of(context).size.height,
-                width: MediaQuery.of(context).size.width,
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(10, 15, 10, 0),
-                        child: EasyDateTimeLine(
-                          initialDate: DateTime.now(),
-                          headerProps: EasyHeaderProps(
-                              selectedDateStyle: TextStyle(
-                                  fontSize: 18, fontWeight: FontWeight.bold),
-                              monthPickerType: MonthPickerType.switcher,
-                              monthStyle: TextStyle(
-                                  fontSize: 18, fontWeight: FontWeight.bold)),
-                          dayProps: EasyDayProps(
-                              dayStructure: DayStructure.dayStrDayNumMonth,
-                              activeDayStyle: DayStyle(
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    colors: [
-                                      Color(0xff3371FF),
-                                      Color(0xff8426D6)
-                                    ],
-                                    begin: Alignment.topCenter,
-                                    end: Alignment.bottomCenter,
-                                  ),
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(10)),
+        child: isLogin
+            ? Center(
+                child: CircularProgressIndicator(),
+              )
+            : BlocProvider<EmpDashBloc>(
+                create: (context) => EmpDashBloc(),
+                child: BlocBuilder<EmpDashBloc, EmpDashState>(
+                  builder: (context, state) {
+                    return Container(
+                      // padding: EdgeInsets.fromLTRB(15, 20, 15, 0),
+                      height: MediaQuery.of(context).size.height,
+                      width: MediaQuery.of(context).size.width,
+                      child: SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(10, 15, 10, 0),
+                              child: EasyDateTimeLine(
+                                initialDate: DateTime.now(),
+                                headerProps: EasyHeaderProps(
+                                    selectedDateStyle: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold),
+                                    monthPickerType: MonthPickerType.switcher,
+                                    monthStyle: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold)),
+                                dayProps: EasyDayProps(
+                                    dayStructure:
+                                        DayStructure.dayStrDayNumMonth,
+                                    activeDayStyle: DayStyle(
+                                      decoration: BoxDecoration(
+                                        gradient: LinearGradient(
+                                          colors: [
+                                            Color(0xff3371FF),
+                                            Color(0xff8426D6)
+                                          ],
+                                          begin: Alignment.topCenter,
+                                          end: Alignment.bottomCenter,
+                                        ),
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(10)),
+                                      ),
+                                    ),
+                                    todayHighlightColor: Color(0xffc8eccc),
+                                    todayHighlightStyle:
+                                        TodayHighlightStyle.withBackground),
+                              ),
+                            ),
+                            SizedBox(
+                              height: 20,
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
+                              child: Container(
+                                padding: EdgeInsets.only(bottom: 10),
+                                child: Column(
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Align(
+                                          alignment: Alignment.centerLeft,
+                                          child: Text(
+                                            "Today's Tasks",
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 20),
+                                          ),
+                                        ),
+                                        TextButton(
+                                            onPressed: () {},
+                                            child: Text(
+                                              "Show all",
+                                              style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: 15),
+                                            ))
+                                      ],
+                                    ),
+                                    SizedBox(
+                                      height: 5,
+                                    ),
+                                    Container(
+                                      width: MediaQuery.of(context).size.width,
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              0.2,
+                                      child: ListView.builder(
+                                          scrollDirection: Axis.horizontal,
+                                          itemCount: taskDataList.length,
+                                          itemBuilder: (context, index) {
+                                            final taskList =
+                                                taskDataList[index];
+                                            final id = taskId[index] as int;
+                                            return Utility().taskContainerUtil(
+                                                context,
+                                                taskList.title!,
+                                                taskList.description!,
+                                                taskList.status!,
+                                                taskList.assigned_by!,
+                                                () async {
+                                              print(
+                                                  "$id status ${taskList.status}");
+                                              await updateTaskStatus(id as int);
+                                              print(
+                                                  "$id status ${taskList.status}");
+                                              setState(() {});
+                                              print("REBUILD");
+                                              Navigator.of(context).pop();
+                                            });
+                                          }),
+                                    ),
+                                    SizedBox(
+                                      height: 5,
+                                    ),
+                                  ],
                                 ),
                               ),
-                              todayHighlightColor: Color(0xffc8eccc),
-                              todayHighlightStyle:
-                                  TodayHighlightStyle.withBackground),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
-                        child: Container(
-                          padding: EdgeInsets.only(bottom: 10),
-                          child: Column(
-                            children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: Text(
-                                      "Today's Tasks",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 20),
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Stack(
+                              children: [
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(15, 0, 15, 0),
+                                  child: Container(
+                                    height: MediaQuery.of(context).size.height *
+                                        0.25,
+                                    width: MediaQuery.of(context).size.width,
+                                    decoration: BoxDecoration(
+                                      color: Color(0xFFADEDE3),
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(20)),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withOpacity(0.4),
+                                          spreadRadius: 2,
+                                          blurRadius: 8,
+                                          offset: Offset(-2, 4),
+                                        ),
+                                      ],
+                                    ),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.fromLTRB(
+                                              15, 20, 0, 20),
+                                          child: Align(
+                                            alignment: Alignment.centerLeft,
+                                            child: Text(
+                                              "Today's Progress",
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 20,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        Row(
+                                          children: [
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.fromLTRB(
+                                                      20, 0, 0, 0),
+                                              child: Container(
+                                                height: 30,
+                                                width: 50,
+                                                // margin: EdgeInsets.all(10),
+                                                decoration: BoxDecoration(
+                                                  color: Color(0xFF42F1A8),
+                                                  borderRadius:
+                                                      BorderRadius.all(
+                                                          Radius.circular(20)),
+                                                ),
+                                                child: Center(
+                                                    child: Text(
+                                                        "$completedTasks/$totalTasks")),
+                                              ),
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  left: 10),
+                                              child: Text(
+                                                "Task",
+                                                style: TextStyle(
+                                                  fontSize: 18,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.fromLTRB(
+                                              35, 10, 0, 10),
+                                          child: Text(
+                                            "You have marked $completedTasks/$totalTasks\ncompleted 🎉",
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.fromLTRB(
+                                              20, 0, 0, 0),
+                                          child: ElevatedButton(
+                                            onPressed: () {},
+                                            style: ElevatedButton.styleFrom(
+                                              elevation: 10,
+                                              backgroundColor:
+                                                  Color(0xFF42F1A8),
+                                            ),
+                                            child: Text(
+                                              "All Tasks",
+                                              style: TextStyle(
+                                                  color: Colors.black),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
-                                  TextButton(
-                                      onPressed: () {},
-                                      child: Text(
-                                        "Show all",
-                                        style: TextStyle(
-                                            color: Colors.black, fontSize: 15),
-                                      ))
-                                ],
-                              ),
-                              SizedBox(
-                                height: 5,
-                              ),
-                              Container(
-                                width: MediaQuery.of(context).size.width,
-                                height:
-                                    MediaQuery.of(context).size.height * 0.2,
-                                child: ListView.builder(
-                                    scrollDirection: Axis.horizontal,
-                                    itemCount: taskDataList.length,
-                                    itemBuilder: (context, index) {
-                                      final taskList = taskDataList[index];
-                                      final id = taskId[index] as int;
-                                      return Utility().taskContainerUtil(
-                                          context,
-                                          taskList.title!,
-                                          taskList.description!,
-                                          taskList.status!,
-                                          taskList.assigned_by!, () async {
-                                        print("$id status ${taskList.status}");
-                                        await updateTaskStatus(id as int);
-                                        print("$id status ${taskList.status}");
-                                        setState(() {});
-                                        print("REBUILD");
-                                        Navigator.of(context).pop();
-                                      });
-                                    }),
-                              ),
-                              SizedBox(
-                                height: 5,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Stack(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
-                            child: Container(
-                              height: MediaQuery.of(context).size.height * 0.25,
-                              width: MediaQuery.of(context).size.width,
-                              decoration: BoxDecoration(
-                                color: Color(0xFFADEDE3),
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(20)),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.4),
-                                    spreadRadius: 2,
-                                    blurRadius: 8,
-                                    offset: Offset(-2, 4),
+                                ),
+                                Positioned(
+                                  top: 60,
+                                  right: 35,
+                                  child: SizedBox(
+                                    height: 120,
+                                    width: 120,
+                                    child: SfRadialGauge(axes: <RadialAxis>[
+                                      RadialAxis(
+                                        minimum: 0,
+                                        maximum: 100,
+                                        showLabels: false,
+                                        showTicks: false,
+                                        axisLineStyle: AxisLineStyle(
+                                          thickness: 0.2,
+                                          cornerStyle: CornerStyle.bothCurve,
+                                          color: Colors.white,
+                                          thicknessUnit: GaugeSizeUnit.factor,
+                                        ),
+                                        pointers: [
+                                          RangePointer(
+                                            value: taskProgress,
+                                            width: 14,
+                                            color: Colors.lightBlueAccent,
+                                            cornerStyle: CornerStyle.bothCurve,
+                                          )
+                                        ],
+                                        annotations: [
+                                          GaugeAnnotation(
+                                            widget: Text(
+                                              "${taskProgress.toStringAsFixed(0)}%",
+                                              style: TextStyle(
+                                                fontSize: 22,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ]),
                                   ),
-                                ],
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.fromLTRB(
-                                        15, 20, 0, 20),
-                                    child: Align(
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 30,
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
+                              child: Container(
+                                // color: Colors.red,
+                                child: Column(
+                                  children: [
+                                    Align(
                                       alignment: Alignment.centerLeft,
                                       child: Text(
-                                        "Today's Progress",
+                                        "Tasks Assigned By",
                                         style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 20,
-                                        ),
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 20),
                                       ),
                                     ),
-                                  ),
-                                  Row(
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsets.fromLTRB(
-                                            20, 0, 0, 0),
-                                        child: Container(
-                                          height: 30,
-                                          width: 50,
-                                          // margin: EdgeInsets.all(10),
-                                          decoration: BoxDecoration(
-                                            color: Color(0xFF42F1A8),
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(20)),
-                                          ),
-                                          child: Center(
-                                              child: Text(
-                                                  "$completedTasks/$totalTasks")),
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding:
-                                            const EdgeInsets.only(left: 10),
-                                        child: Text(
-                                          "Task",
-                                          style: TextStyle(
-                                            fontSize: 18,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.fromLTRB(
-                                        35, 10, 0, 10),
-                                    child: Text(
-                                      "You have marked $completedTasks/$totalTasks\ncompleted 🎉",
+                                    SizedBox(
+                                      height: 30,
                                     ),
-                                  ),
-                                  Padding(
-                                    padding:
-                                        const EdgeInsets.fromLTRB(20, 0, 0, 0),
-                                    child: ElevatedButton(
-                                      onPressed: () {},
-                                      style: ElevatedButton.styleFrom(
-                                        elevation: 10,
-                                        backgroundColor: Color(0xFF42F1A8),
-                                      ),
-                                      child: Text(
-                                        "All Tasks",
-                                        style: TextStyle(color: Colors.black),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          Positioned(
-                            top: 60,
-                            right: 35,
-                            child: SizedBox(
-                              height: 120,
-                              width: 120,
-                              child: SfRadialGauge(axes: <RadialAxis>[
-                                RadialAxis(
-                                  minimum: 0,
-                                  maximum: 100,
-                                  showLabels: false,
-                                  showTicks: false,
-                                  axisLineStyle: AxisLineStyle(
-                                    thickness: 0.2,
-                                    cornerStyle: CornerStyle.bothCurve,
-                                    color: Colors.white,
-                                    thicknessUnit: GaugeSizeUnit.factor,
-                                  ),
-                                  pointers: [
-                                    RangePointer(
-                                      value: taskProgress,
-                                      width: 14,
-                                      color: Colors.lightBlueAccent,
-                                      cornerStyle: CornerStyle.bothCurve,
-                                    )
-                                  ],
-                                  annotations: [
-                                    GaugeAnnotation(
-                                      widget: Text(
-                                        "${taskProgress.toStringAsFixed(0)}%",
-                                        style: TextStyle(
-                                          fontSize: 22,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
+                                    ListView.builder(
+                                      padding: EdgeInsets.zero,
+                                      shrinkWrap: true,
+                                      itemCount: mngDataList.length,
+                                      itemBuilder: (context, index) {
+                                        final mngList = mngDataList[index];
+                                        return Utility().mngContainerUtil(
+                                            context,
+                                            mngList.mname!,
+                                            mngList.memail!,
+                                            mngList.mcontact!,
+                                            mngList.mimage ??
+                                                "https://img.freepik.com/free-psd/3d-illustration-person-with-sunglasses_23-2149436188.jpg?size=338&ext=jpg&ga=GA1.1.2008272138.1723593600&semt=ais_hybrid");
+                                      },
                                     ),
                                   ],
                                 ),
-                              ]),
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 30,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
-                        child: Container(
-                          // color: Colors.red,
-                          child: Column(
-                            children: [
-                              Align(
-                                alignment: Alignment.centerLeft,
-                                child: Text(
-                                  "Tasks Assigned By",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 20),
-                                ),
-                              ),
-                              SizedBox(
-                                height: 30,
-                              ),
-                              ListView.builder(
-                                padding: EdgeInsets.zero,
-                                shrinkWrap: true,
-                                itemCount: mngDataList.length,
-                                itemBuilder: (context, index) {
-                                  final mngList = mngDataList[index];
-                                  return Utility().mngContainerUtil(
-                                      context,
-                                      mngList.mname!,
-                                      mngList.memail!,
-                                      mngList.mcontact!,
-                                      mngList.mimage ??
-                                          "https://img.freepik.com/free-psd/3d-illustration-person-with-sunglasses_23-2149436188.jpg?size=338&ext=jpg&ga=GA1.1.2008272138.1723593600&semt=ais_hybrid");
-                                },
-                              ),
-                            ],
-                          ),
+                            SizedBox(
+                              height: 40,
+                            ),
+                          ],
                         ),
                       ),
-                      SizedBox(
-                        height: 40,
-                      ),
-                    ],
-                  ),
+                    );
+                  },
                 ),
-              );
-            },
-          ),
-        ),
+              ),
       ),
     );
   }

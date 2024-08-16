@@ -56,7 +56,7 @@ class _LoginScreenState extends State<LoginScreen> {
             child: BlocBuilder<LoginBloc, LoginState>(
               builder: (context, state) {
                 return Container(
-                  padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
+                  padding: EdgeInsets.fromLTRB(20, 10, 20, 0),
                   height: MediaQuery.of(context).size.height,
                   width: MediaQuery.of(context).size.width,
                   color: Colors.white,
@@ -72,9 +72,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                 fontWeight: FontWeight.bold,
                                 color: Theme.of(context).primaryColor),
                           ),
-                        ),
-                        SizedBox(
-                          height: 5,
                         ),
                         Align(
                           alignment: Alignment.centerLeft,
@@ -143,9 +140,10 @@ class _LoginScreenState extends State<LoginScreen> {
                           ],
                         ),
                         SizedBox(
-                          height: 10,
+                          height: 5,
                         ),
                         Form(
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
                           key: _key,
                           child: Column(
                             children: [
@@ -198,6 +196,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     child: Text(
                                       "Forgot Password?",
                                       style: TextStyle(
+                                        color: Colors.black,
                                           fontSize: 16,
                                           fontWeight: FontWeight.bold),
                                     ),
@@ -210,7 +209,6 @@ class _LoginScreenState extends State<LoginScreen> {
                         Align(
                           alignment: Alignment.centerLeft,
                           child: Container(
-                            // margin: EdgeInsets.only(bottom: 10),
                             height: 30,
                             width: MediaQuery.of(context).size.width * 0.4,
                             decoration: BoxDecoration(
@@ -253,7 +251,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         SizedBox(
                           width: MediaQuery.of(context).size.width,
-                          height: 60,
+                          height: 50,
                           child: ElevatedButton(
                             onPressed: () {
                               if (!_key.currentState!.validate()) {
@@ -285,9 +283,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                   fontWeight: FontWeight.bold),
                             ),
                           ),
-                        ),
-                        SizedBox(
-                          height: 5,
                         ),
                         Row(
                           children: [
