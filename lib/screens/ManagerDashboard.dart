@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -15,6 +17,7 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
   String _managerContact = '';
   String _managerEmail = '';
   String _managerPassword = '';
+  String _managerImage = '';
   List<Map<String, dynamic>> _edata = [];
   String _id = '';
 
@@ -39,6 +42,7 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
           _managerContact = dbData[0]['mcontact'];
           _managerEmail = dbData[0]['memail'];
           _managerPassword = dbData[0]['mpassword'];
+          _managerImage = dbData[0]['mimage'];
         });
       }
     }
@@ -136,8 +140,12 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
                   leading: Container(
                     decoration: BoxDecoration(border: Border.all(color: Colors.black),borderRadius: BorderRadius.all(Radius.circular(30))),
                     child: CircleAvatar(
-                        backgroundColor: Colors.green,
-                        child: Icon(Icons.person,color: Colors.white,)),
+                      backgroundColor: Colors.green,
+                      //Todo change here
+                      child: _managerImage == null ?Icon(Icons.person,color: Colors.white,): null,
+                      backgroundImage: _managerImage != null ? FileImage(File(_managerImage)): null,
+                      //todo end here
+                    ),
                   ),
                   title: Text(_edata[index]['name'],style: TextStyle(color: Colors.green,fontWeight: FontWeight.bold)),
                   subtitle: Text(_edata[index]['email'],style: TextStyle(color: Colors.grey,fontWeight: FontWeight.bold)),

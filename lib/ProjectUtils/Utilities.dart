@@ -1,5 +1,7 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:slide_to_act/slide_to_act.dart';
@@ -309,7 +311,6 @@ class Utility {
       padding: const EdgeInsets.fromLTRB(15, 0, 15, 15),
       child: Container(
         height: MediaQuery.of(context).size.height * 0.1,
-        // width: MediaQuery.of(context).size.width,
         padding: EdgeInsets.all(12),
         decoration: BoxDecoration(
           boxShadow: [
@@ -324,32 +325,33 @@ class Utility {
           borderRadius: BorderRadius.all(Radius.circular(20)),
         ),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Container(
               height: MediaQuery.of(context).size.height * 0.1,
-              width: MediaQuery.of(context).size.width * 0.16,
+              width: MediaQuery.of(context).size.width * 0.16, // Adjusted width
               decoration: BoxDecoration(
-                // color: Colors.blue,
                 borderRadius: BorderRadius.all(Radius.circular(8)),
                 border: Border.all(color: Colors.black),
                 image: DecorationImage(
                   fit: BoxFit.cover,
-                  image: NetworkImage(mngImage ??
-                      "https://img.freepik.com/free-psd/3d-illustration-person-with-sunglasses_23-2149436188.jpg?size=338&ext=jpg&ga=GA1.1.2008272138.1723593600&semt=ais_hybrid"),
+                  image: FileImage(
+                    File(mngImage ??
+                        "https://img.freepik.com/free-psd/3d-illustration-person-with-sunglasses_23-2149436188.jpg?size=338&ext=jpg&ga=GA1.1.2008272138.1723593600&semt=ais_hybrid"),
+                  ),
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(5, 0, 0, 0),
+            SizedBox(width: 10),
+            Expanded(
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     mngName,
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                   ),
+                  SizedBox(height: 5), // Added spacing
                   Text(
                     mngEmail,
                     style: TextStyle(fontSize: 12),
@@ -357,6 +359,7 @@ class Utility {
                 ],
               ),
             ),
+            SizedBox(width: 10), // Added spacing between text and icons
             IconButton(
               onPressed: () async {
                 String phoneNumber = mngContact;
@@ -375,7 +378,7 @@ class Utility {
               icon: FaIcon(FontAwesomeIcons.whatsapp),
             ),
             IconButton(
-                onPressed: () => launchUrlString("tel://$mngContact"),
+                onPressed: () => launchUrl(Uri.parse(("tel://$mngContact"))),
                 icon: Icon(Icons.phone)),
           ],
         ),

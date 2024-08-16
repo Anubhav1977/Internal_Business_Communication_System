@@ -1,5 +1,7 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, avoid_print, avoid_function_literals_in_foreach_calls
 
+import 'dart:io';
+
 import 'package:easy_date_timeline/easy_date_timeline.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -31,31 +33,70 @@ class _EmployeeDashboardState extends State<EmployeeDashboard> {
   String? id;
 
   updateTaskStatus(int taskId) async {
+    print("Updating task with ID: $taskId");
     Database _db = await AppDataBase().getDatabase();
-    await _db.rawUpdate(
+
+    // Perform the update
+    int count = await _db.rawUpdate(
       'UPDATE TASK SET status = ? WHERE id = ?',
       ['completed', taskId],
     );
+
+    // Check how many rows were updated
+    print("$count rows updated");
+
+    // Fetch data again to ensure it's updated
     await fetchData();
   }
 
   fetchData() async {
-    print("Getting data from db");
+    print("Fetching data for employee ID: $id");
     empDataList = await AppDataBase().getEmpdbInfo(id!);
-    mngDataList = await AppDataBase().getManagerdbInfo(managerIds);
     taskDataList = await AppDataBase().getTaskdbInfo(id!);
     pendingTaskList = await AppDataBase().getPendingTaskdbInfo(id!);
     taskId = await AppDataBase().getTaskId();
-    print("data fetched");
+    print("Data fetched, total tasks: ${taskDataList.length}");
+
     empName = empDataList.first.name!;
     taskTitle = taskDataList.first.title!;
     totalTasks = taskDataList.length;
+
+    print("Fetching manager data");
     managerIds = taskDataList.map((task) => task.assigned_by).toList();
+    mngDataList = await AppDataBase().getManagerdbInfo(managerIds);
+    print("Fetched manager data");
+
     completedTasks =
         taskDataList.where((task) => task.status == 'completed').length;
-    print("Fetech Completed");
-    setState(() {});
+    print("Completed tasks: $completedTasks");
+
+    setState(() {
+      // Trigger UI update
+    });
   }
+
+  // fetchData() async {
+  //   print("Getting data from db");
+  //   empDataList = await AppDataBase().getEmpdbInfo(id!);
+  //   taskDataList = await AppDataBase().getTaskdbInfo(id!);
+  //   pendingTaskList = await AppDataBase().getPendingTaskdbInfo(id!);
+  //   taskId = await AppDataBase().getTaskId();
+  //   print("data fetched");
+  //   empName = empDataList.first.name!;
+  //   taskTitle = taskDataList.first.title!;
+  //   totalTasks = taskDataList.length;
+  //   print("Fetching manager data");
+  //   managerIds = taskDataList.map((task) => task.assigned_by).toList();
+  //   mngDataList = await AppDataBase().getManagerdbInfo(managerIds);
+  //   print("fetched manager data");
+  //   mngDataList.forEach((ele) {
+  //     print(ele.mname);
+  //   });
+  //   completedTasks =
+  //       taskDataList.where((task) => task.status == 'completed').length;
+  //   print("Fetech Completed");
+  //   setState(() {});
+  // }
 
   @override
   void initState() {
@@ -91,7 +132,15 @@ class _EmployeeDashboardState extends State<EmployeeDashboard> {
             child: CircleAvatar(
               backgroundColor: Colors.blueAccent,
               radius: 20,
-              child: Icon(Icons.person),
+              backgroundImage: empDataList.first.image != null
+                  ? FileImage(File(empDataList.first.image!))
+                  : null,
+              child: empDataList.first.image == null
+                  ? Icon(
+                      Icons.person,
+                      color: Colors.white,
+                    )
+                  : null,
             ),
           )
         ],
@@ -224,7 +273,7 @@ class _EmployeeDashboardState extends State<EmployeeDashboard> {
                               Container(
                                 width: MediaQuery.of(context).size.width,
                                 height:
-                                    MediaQuery.of(context).size.height * 0.16,
+                                    MediaQuery.of(context).size.height * 0.2,
                                 child: ListView.builder(
                                     scrollDirection: Axis.horizontal,
                                     itemCount: taskDataList.length,
@@ -246,34 +295,6 @@ class _EmployeeDashboardState extends State<EmployeeDashboard> {
                                       });
                                     }),
                               ),
-                              // Container(
-                              //   width: MediaQuery.of(context).size.width,
-                              //   height:
-                              //       MediaQuery.of(context).size.height * 0.16,
-                              //   child: ListView.builder(
-                              //     scrollDirection: Axis.horizontal,
-                              //     itemCount: pendingTaskList.length,
-                              //     itemBuilder: (context, index) {
-                              //       final taskList = pendingTaskList[index];
-                              //       final id = taskId[index] as int;
-                              //       return Utility().taskContainerUtil(
-                              //         context,
-                              //         taskList.title!,
-                              //         taskList.description!,
-                              //         taskList.status!,
-                              //         taskList.assigned_by!,
-                              //         () async {
-                              //           print("$id status ${taskList.status}");
-                              //           await updateTaskStatus(id as int);
-                              //           print("$id status ${taskList.status}");
-                              //           setState(() {});
-                              //           print("REBUILD");
-                              //           Navigator.of(context).pop();
-                              //         },
-                              //       );
-                              //     },
-                              //   ),
-                              // ),
                               SizedBox(
                                 height: 5,
                               ),
