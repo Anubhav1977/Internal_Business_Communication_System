@@ -202,18 +202,35 @@ class AppDataBase {
     Database _db = await getDatabase();
     List<Task> taskList = [];
     List<Map<String, dynamic>> dbData =
-    await _db.rawQuery("SELECT * FROM TASK where targetId = ?", [id]);
+        await _db.rawQuery("SELECT * FROM TASK where targetId = ?", [id]);
     taskList = dbData.map((item) => Task.fromJson(item)).toList();
     return taskList;
   }
 
+  Future getPendingTaskdbInfo(String id) async {
+    Database _db = await getDatabase();
+    List<Task> taskList = [];
+    List<Map<String, dynamic>> dbData = await _db.rawQuery(
+        "SELECT * FROM TASK where targetId = ? AND status = 'pending'", [id]);
+    taskList = dbData.map((item) => Task.fromJson(item)).toList();
+    return taskList;
+  }
 
   Future<List<Manager>> getManagerdbInfo(List<String?> managerIds) async {
     Database _db = await getDatabase();
     String placeholders = List.filled(managerIds.length, '?').join(',');
     String sql = "SELECT * FROM MANAGER WHERE mid IN ($placeholders)";
     List<Map<String, dynamic>> dbData = await _db.rawQuery(sql, managerIds);
-    List<Manager> managerList = dbData.map((item) => Manager.fromJson(item)).toList();
+    List<Manager> managerList =
+        dbData.map((item) => Manager.fromJson(item)).toList();
     return managerList;
+  }
+
+  Future getTaskId() async {
+    Database _db = await getDatabase();
+    List<dynamic> taskid = [];
+    List<dynamic> dbData = await _db.rawQuery("SELECT id FROM TASK");
+    taskid = dbData.map((ele) => ele['id'] as int).toList();
+    return taskid;
   }
 }

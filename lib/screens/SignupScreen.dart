@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables
 
+import 'dart:io';
 import 'dart:math';
 
 import 'package:animated_toggle_switch/animated_toggle_switch.dart';
@@ -7,9 +8,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:inter_business_comm_system/Database.dart';
 import 'package:inter_business_comm_system/ProjectUtils/Utilities.dart';
-import 'package:shimmer/shimmer.dart';
+
+
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -21,7 +24,7 @@ class SignupScreen extends StatefulWidget {
 class _SignupScreenState extends State<SignupScreen> {
   final _key = GlobalKey<FormState>();
   DraggableScrollableController scrollController =
-      DraggableScrollableController();
+  DraggableScrollableController();
   final nameController = TextEditingController();
   final phoneController = TextEditingController();
   final emailController = TextEditingController();
@@ -31,6 +34,65 @@ class _SignupScreenState extends State<SignupScreen> {
   bool isManager = false;
   List<String> designation = ["Management", "Business Analyst", "Tech"];
   var currentValue = "Select Designation";
+  File? _image;
+
+
+
+  void _showImagePickerDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Select Image'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: Icon(Icons.camera),
+                title: Text('Camera'),
+                onTap: () {
+                  _getImageFromCamera();
+                  Navigator.of(context).pop();
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.image),
+                title: Text('Gallery'),
+                onTap: () {
+                  _getImageFromGallery();
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _getImageFromCamera() async {
+    final ImagePicker _picker = ImagePicker();
+    final XFile? image = await _picker.pickImage(source: ImageSource.camera);
+    setState(() {
+      if (image != null) {
+        _image = File(image.path);
+      } else {
+        _image = null;
+      }
+    });
+  }
+
+  void _getImageFromGallery() async {
+    final ImagePicker _picker = ImagePicker();
+    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+    setState(() {
+      if (image != null) {
+        _image = File(image.path);
+      } else {
+        _image = null;
+      }
+    });
+  }
 
   Future<String> generateUniqueId(bool isManager) async {
     String prefix = isManager ? "manager_id0" : "emp_id0";
@@ -70,7 +132,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       nameController.text,
                       phoneController.text,
                       emailController.text,
-                      "path",
+                      _image!.path,
                       confirmPassController.text);
                   Utility().showSnackbarUtil(
                       context, "Your Unique Employee id : $manager_id",
@@ -89,7 +151,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       phoneController.text,
                       emailController.text,
                       currentValue,
-                      "path",
+                      _image!.path,
                       confirmPassController.text);
                   Utility().showSnackbarUtil(
                       context, "Your Unique Employee id : $emp_id",
@@ -174,7 +236,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                   padding: const EdgeInsets.all(20.0),
                                   child: Column(
                                     crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                    CrossAxisAlignment.start,
                                     children: [
                                       Center(
                                         child: Text(
@@ -185,35 +247,50 @@ class _SignupScreenState extends State<SignupScreen> {
                                       SizedBox(height: 20),
                                       Form(
                                         key: _key,
+                                        autovalidateMode: AutovalidateMode.onUserInteraction,
                                         child: Column(
                                           children: [
-                                            CircleAvatar(
-                                              radius: 50,
-                                              backgroundColor: Theme.of(context)
-                                                  .secondaryHeaderColor,
-                                              child: Icon(Icons.camera),
+                                            GestureDetector(
+                                              onTap: () {
+                                                _showImagePickerDialog();
+                                              },
+                                              child: CircleAvatar(
+                                                radius: 50,
+                                                backgroundColor: Colors.grey,
+                                                backgroundImage: _image != null ? FileImage(_image!) : null,
+                                                child: _image != null
+                                                    ? null
+                                                    : Icon(Icons.camera, size: 30, color: Colors.white),
+                                              ),
                                             ),
                                             SizedBox(height: 30),
                                             Utility().textfeildUtil(
-                                              nameController,
-                                              "Name",
-                                              "Enter your Full Name",
-                                              Icons.person,
-                                              context,
+                                                nameController,
+                                                "Name",
+                                                "Enter your Full Name",
+                                                Icons.person,
+                                                context,
+                                                "Name only contains[a-z] with first[A-Z]",
+                                                r"^[A-Z][a-z ]*$"
                                             ),
                                             Utility().textfeildUtil(
-                                              emailController,
-                                              "Email Id",
-                                              "Enter your Email",
-                                              Icons.email,
-                                              context,
+                                                emailController,
+                                                "Email Id",
+                                                "Enter your Email",
+                                                Icons.email,
+                                                context,
+                                                "Invalid email address. Please enter a valid email address",
+                                                r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
                                             ),
                                             Utility().textfeildUtil(
-                                              phoneController,
-                                              "Contact",
-                                              "Enter your Contact Number",
-                                              Icons.call,
-                                              context,
+                                                phoneController,
+                                                "Contact",
+                                                "Enter your Contact Number",
+                                                Icons.call,
+                                                context,
+                                                textinput: TextInputType.phone,
+                                                "Invalid phone number. Please enter a valid 10-digit number",
+                                                r"^([0-9]{10})$"
                                             ),
                                             Utility().textfeildUtil(
                                               passwordController,
@@ -221,6 +298,8 @@ class _SignupScreenState extends State<SignupScreen> {
                                               "Enter your Password",
                                               Icons.key_outlined,
                                               context,
+                                              "Invalid password. Please enter a password with at least 8 characters, including at least one letter and one number",
+                                              r"^(?=.*[a-zA-Z])(?=.*[0-9]).{8,}$",
                                               isSuffix: true,
                                             ),
                                             Utility().textfeildUtil(
@@ -229,6 +308,8 @@ class _SignupScreenState extends State<SignupScreen> {
                                               "Re-enter your Password",
                                               Icons.key_outlined,
                                               context,
+                                              "Your Password is not Matched. Please check again",
+                                              "",
                                               isSuffix: true,
                                             ),
                                             DropdownButtonFormField<String>(
@@ -263,8 +344,8 @@ class _SignupScreenState extends State<SignupScreen> {
                                                 label: Text("Designation"),
                                                 border: OutlineInputBorder(
                                                   borderRadius:
-                                                      BorderRadius.all(
-                                                          Radius.circular(10)),
+                                                  BorderRadius.all(
+                                                      Radius.circular(10)),
                                                 ),
                                               ),
                                             ),
@@ -280,7 +361,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                                 Text(
                                                   "or Signup via Socials",
                                                   style:
-                                                      TextStyle(fontSize: 16),
+                                                  TextStyle(fontSize: 16),
                                                 ),
                                                 SizedBox(width: 5),
                                                 Expanded(
@@ -292,7 +373,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                             ),
                                             Row(
                                               mainAxisAlignment:
-                                                  MainAxisAlignment.center,
+                                              MainAxisAlignment.center,
                                               children: [
                                                 Utility().socialButtonUtil(
                                                   context,
@@ -323,8 +404,8 @@ class _SignupScreenState extends State<SignupScreen> {
                                           margin: EdgeInsets.only(bottom: 10),
                                           height: 30,
                                           width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
+                                              .size
+                                              .width *
                                               0.4,
                                           decoration: BoxDecoration(
                                             borderRadius: BorderRadius.all(
@@ -341,49 +422,49 @@ class _SignupScreenState extends State<SignupScreen> {
                                             },
                                             styleBuilder: (value) =>
                                                 ToggleStyle(
-                                              backgroundColor:
+                                                  backgroundColor:
                                                   Color(0xFFEBF8F1),
-                                              indicatorColor: value
-                                                  ? Colors.greenAccent
-                                                  : Colors.redAccent,
-                                            ),
+                                                  indicatorColor: value
+                                                      ? Colors.greenAccent
+                                                      : Colors.redAccent,
+                                                ),
                                             iconBuilder: (value) => value
                                                 ? Icon(Icons.person)
                                                 : Icon(Icons
-                                                    .business_center_outlined),
+                                                .business_center_outlined),
                                             textBuilder: (value) => value
                                                 ? Text(
-                                                    "As Employee",
-                                                    style: TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.bold),
-                                                  )
+                                              "As Employee",
+                                              style: TextStyle(
+                                                  fontWeight:
+                                                  FontWeight.bold),
+                                            )
                                                 : Text(
-                                                    "As Manager",
-                                                    style: TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.bold),
-                                                  ),
+                                              "As Manager",
+                                              style: TextStyle(
+                                                  fontWeight:
+                                                  FontWeight.bold),
+                                            ),
                                           ),
                                         ),
                                       ),
                                       Center(
                                         child: ElevatedButton(
                                           onPressed: () {
-                                            if (!_key.currentState!
-                                                .validate()) {
-                                              context
-                                                  .read<SignBloc>()
-                                                  .add(SignFailureEvent());
-                                            } else {
+                                            if (_key.currentState!
+                                                .validate() && passwordController.text == confirmPassController.text) {
                                               context
                                                   .read<SignBloc>()
                                                   .add(SignSuccessEvent());
+                                            } else {
+                                              context
+                                                  .read<SignBloc>()
+                                                  .add(SignFailureEvent());
                                             }
                                           },
                                           style: ElevatedButton.styleFrom(
                                             backgroundColor:
-                                                Theme.of(context).primaryColor,
+                                            Theme.of(context).primaryColor,
                                             shape: RoundedRectangleBorder(
                                               borderRadius: BorderRadius.all(
                                                   Radius.circular(10)),

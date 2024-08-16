@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:inter_business_comm_system/ProjectUtils/Utilities.dart';
 import 'package:inter_business_comm_system/services/Employeeservice.dart';
 import 'package:inter_business_comm_system/services/Managerservice.dart';
+import 'package:sqflite/sqflite.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../Database.dart';
@@ -19,30 +20,40 @@ class EmployeeDashboard extends StatefulWidget {
 class _EmployeeDashboardState extends State<EmployeeDashboard> {
   List<Employee> empDataList = [];
   List<Task> taskDataList = [];
+  List<Task> pendingTaskList = [];
   List<Manager> mngDataList = [];
   List<String?> managerIds = [];
   String empName = "";
   String taskTitle = "";
   int totalTasks = 0;
   int completedTasks = 0;
+  List<dynamic> taskId = [];
   String? id;
+
+  updateTaskStatus(int taskId) async {
+    Database _db = await AppDataBase().getDatabase();
+    await _db.rawUpdate(
+      'UPDATE TASK SET status = ? WHERE id = ?',
+      ['completed', taskId],
+    );
+    await fetchData();
+  }
 
   fetchData() async {
     print("Getting data from db");
-    empDataList = await AppDataBase().getEmpdbInfo("emp_id024");
-    taskDataList = await AppDataBase().getTaskdbInfo("emp_id024");
+    empDataList = await AppDataBase().getEmpdbInfo(id!);
+    mngDataList = await AppDataBase().getManagerdbInfo(managerIds);
+    taskDataList = await AppDataBase().getTaskdbInfo(id!);
+    pendingTaskList = await AppDataBase().getPendingTaskdbInfo(id!);
+    taskId = await AppDataBase().getTaskId();
     print("data fetched");
     empName = empDataList.first.name!;
     taskTitle = taskDataList.first.title!;
     totalTasks = taskDataList.length;
     managerIds = taskDataList.map((task) => task.assigned_by).toList();
-    mngDataList = await AppDataBase().getManagerdbInfo(managerIds);
-    print("Manager data fetched");
-    mngDataList.forEach((ele) {
-      print(ele.mname);
-    });
     completedTasks =
         taskDataList.where((task) => task.status == 'completed').length;
+    print("Fetech Completed");
     setState(() {});
   }
 
@@ -71,8 +82,6 @@ class _EmployeeDashboardState extends State<EmployeeDashboard> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         title: Text(empName),
-        // leading: IconButton,
-        // leading: Icon(Icons.menu),
         actions: [
           IconButton(
               onPressed: () {},
@@ -221,14 +230,50 @@ class _EmployeeDashboardState extends State<EmployeeDashboard> {
                                     itemCount: taskDataList.length,
                                     itemBuilder: (context, index) {
                                       final taskList = taskDataList[index];
+                                      final id = taskId[index] as int;
                                       return Utility().taskContainerUtil(
                                           context,
                                           taskList.title!,
                                           taskList.description!,
                                           taskList.status!,
-                                          taskList.assigned_by!);
+                                          taskList.assigned_by!, () async {
+                                        print("$id status ${taskList.status}");
+                                        await updateTaskStatus(id as int);
+                                        print("$id status ${taskList.status}");
+                                        setState(() {});
+                                        print("REBUILD");
+                                        Navigator.of(context).pop();
+                                      });
                                     }),
                               ),
+                              // Container(
+                              //   width: MediaQuery.of(context).size.width,
+                              //   height:
+                              //       MediaQuery.of(context).size.height * 0.16,
+                              //   child: ListView.builder(
+                              //     scrollDirection: Axis.horizontal,
+                              //     itemCount: pendingTaskList.length,
+                              //     itemBuilder: (context, index) {
+                              //       final taskList = pendingTaskList[index];
+                              //       final id = taskId[index] as int;
+                              //       return Utility().taskContainerUtil(
+                              //         context,
+                              //         taskList.title!,
+                              //         taskList.description!,
+                              //         taskList.status!,
+                              //         taskList.assigned_by!,
+                              //         () async {
+                              //           print("$id status ${taskList.status}");
+                              //           await updateTaskStatus(id as int);
+                              //           print("$id status ${taskList.status}");
+                              //           setState(() {});
+                              //           print("REBUILD");
+                              //           Navigator.of(context).pop();
+                              //         },
+                              //       );
+                              //     },
+                              //   ),
+                              // ),
                               SizedBox(
                                 height: 5,
                               ),
@@ -408,7 +453,8 @@ class _EmployeeDashboardState extends State<EmployeeDashboard> {
                                       mngList.mname!,
                                       mngList.memail!,
                                       mngList.mcontact!,
-                                      mngList.mimage!);
+                                      mngList.mimage ??
+                                          "https://img.freepik.com/free-psd/3d-illustration-person-with-sunglasses_23-2149436188.jpg?size=338&ext=jpg&ga=GA1.1.2008272138.1723593600&semt=ais_hybrid");
                                 },
                               ),
                             ],
@@ -439,109 +485,3 @@ abstract class EmpDashState {}
 class InitialState extends EmpDashState {}
 
 abstract class EmpDashEvent {}
-//
-// class PendingScreen extends StatefulWidget {
-//   String? id;
-//
-//   PendingScreen({this.id});
-//
-//   @override
-//   State<PendingScreen> createState() => _PendingScreenState();
-// }
-//
-// class _PendingScreenState extends State<PendingScreen> {
-//   @override
-//   Widget build(BuildContext context) {
-//     employeedata() async {
-//       Database _db = await AppDataBase().getDatabase();
-//       List<Map<String, dynamic>> dbData = await _db.rawQuery(
-//           'SELECT * FROM TASK WHERE targetId = ? AND status = ?',
-//           [widget.id, "pending"]);
-//       return dbData;
-//     }
-//
-//     return Scaffold(
-//       body: FutureBuilder<List<Map<String, dynamic>>>(
-//         future: employeedata(),
-//         builder: (context, snapshot) {
-//           if (snapshot.hasData) {
-//             List<Map<String, dynamic>> elist = snapshot.data!;
-//             if (elist.isEmpty) {
-//               // Show "No tasks assigned" message when data is empty
-//               return Center(
-//                 child: Text(
-//                   'No tasks assigned',
-//                   style: TextStyle(fontSize: 24),
-//                 ),
-//               );
-//             } else {
-//               return ListView.builder(
-//                 itemCount: elist.length,
-//                 itemBuilder: (context, index) {
-//                   final item = elist[index];
-//                   return Dismissible(
-//                     key: ObjectKey(item), // Unique key for each item
-//                     onDismissed: (direction) async {
-//                       // Update the status of the item in the database
-//                       Database _db = await AppDataBase().getDatabase();
-//                       await _db.rawUpdate(
-//                         'UPDATE TASK SET status = ? WHERE id = ?',
-//                         ['completed', item['id']],
-//                       );
-//
-//                       // Remove the item from the list
-//                       setState(() {
-//                         elist.removeAt(index);
-//                       });
-//                     },
-//                     background: Container(
-//                       margin: EdgeInsets.all(10),
-//                       height: MediaQuery.of(context).size.height * 0.08,
-//                       width: MediaQuery.of(context).size.width * 0.86,
-//                       color: Colors.green,
-//                       alignment: Alignment.centerRight,
-//                       // Background color when swiping
-//                       child: CircleAvatar(
-//                         radius: 20,
-//                         backgroundColor: Color.fromARGB(55, 76, 175, 80),
-//                         child: Icon(
-//                           Icons.done_outlined,
-//                           color: Colors.white,
-//                           size: 36,
-//                         ),
-//                       ),
-//                       //padding: EdgeInsets.only(right: 20),
-//                     ),
-//                     child: Container(
-//                       margin: EdgeInsets.all(10),
-//                       decoration: BoxDecoration(
-//                           border: Border.all(color: Colors.black)),
-//                       //padding: EdgeInsets.all(20),
-//                       height: MediaQuery.of(context).size.height * 0.08,
-//                       width: MediaQuery.of(context).size.width * 0.94,
-//                       child: Text(item.toString()), // Convert item to string
-//                     ),
-//                   );
-//                 },
-//               );
-//             }
-//           } else if (snapshot.hasError) {
-//             // Show error message when data loading fails
-//             return Center(
-//               child: Text(
-//                 'Error loading data: ${snapshot.error}',
-//                 style: TextStyle(fontSize: 24, color: Colors.red),
-//               ),
-//             );
-//           } else {
-//             // Show loading indicator when data is being loaded
-//             return Center(child: CircularProgressIndicator());
-//           }
-//         },
-//       ),
-//       // floatingActionButton: FloatingActionButton(onPressed: (){
-//       //   Navigator.push(context, MaterialPageRoute(builder: (context) => CompletedScreen(id: widget.id,)));
-//       // },),
-//     );
-//   }
-// }

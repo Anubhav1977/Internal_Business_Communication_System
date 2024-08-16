@@ -149,14 +149,22 @@ class _LoginScreenState extends State<LoginScreen> {
                           key: _key,
                           child: Column(
                             children: [
-                              Utility().textfeildUtil(idController, "Id",
-                                  "Enter the UniqueId", Icons.badge, context),
+                              Utility().textfeildUtil(
+                                  idController,
+                                  "Id",
+                                  "Enter the UniqueId",
+                                  Icons.badge,
+                                  context,
+                                  "Please enter the valid Id",
+                                  ""),
                               Utility().textfeildUtil(
                                   passwordController,
                                   "Password",
                                   "Enter the Password",
                                   Icons.key,
-                                  context),
+                                  context,
+                                  "Please Enter the valid password",
+                                  r"^(?=.*[a-zA-Z])(?=.*[0-9]).{8,}$"),
                               Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,

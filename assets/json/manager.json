@@ -1,26 +1,26 @@
 [
   {
     "mid": "manager_id042",
-    "mname": "John Doe",
+    "mname": "Michael Johnson",
     "mcontact": "0123456789",
-    "memail": "john.doe@example.com",
-    "mimage": "",
+    "memail": "michael.johnson@example.com",
+    "mimage": null,
     "mpassword": "password123"
   },
   {
     "mid": "manager_id091",
-    "mname": "Jane Smith",
+    "mname": "Emily Davis",
     "mcontact": "0987654321",
-    "memail": "jane.smith@example.com",
-    "mimage": "",
+    "memail": "emily.davis@example.com",
+    "mimage": null,
     "mpassword": "password456"
   },
   {
     "mid": "manager_id018",
-    "mname": "Bob Brown",
+    "mname": "David Wilson",
     "mcontact": "5551234567",
-    "memail": "bob.brown@example.com",
-    "mimage": "",
+    "memail": "david.wilson@example.com",
+    "mimage": null,
     "mpassword": "password789"
   }
 ]
