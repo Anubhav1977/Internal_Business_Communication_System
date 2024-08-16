@@ -68,7 +68,7 @@ class _EmployeeDashboardState extends State<EmployeeDashboard> {
     pendingTaskList = await AppDataBase().getPendingTaskdbInfo(id!);
 
     // Fetch task IDs
-    taskId = await AppDataBase().getTaskId();
+    taskId = await AppDataBase().getTaskId(id!);
     print("Data fetched, total tasks: ${taskDataList.length}");
 
     // Safeguard against empty lists

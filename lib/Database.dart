@@ -226,10 +226,11 @@ class AppDataBase {
     return managerList;
   }
 
-  Future getTaskId() async {
+  Future getTaskId(String targetId) async {
     Database _db = await getDatabase();
     List<dynamic> taskid = [];
-    List<dynamic> dbData = await _db.rawQuery("SELECT id FROM TASK");
+    List<dynamic> dbData = await _db
+        .rawQuery("SELECT id FROM TASK where targetId = ?", [targetId]);
     taskid = dbData.map((ele) => ele['id'] as int).toList();
     return taskid;
   }
