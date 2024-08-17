@@ -120,7 +120,7 @@ class _EmployeeDashboardState extends State<EmployeeDashboard> {
   @override
   Widget build(BuildContext context) {
     double taskProgress =
-        totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
+    totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
 
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -136,15 +136,8 @@ class _EmployeeDashboardState extends State<EmployeeDashboard> {
             child: CircleAvatar(
               backgroundColor: Colors.blueAccent,
               radius: 20,
-              backgroundImage: empDataList.first.image != null
-                  ? FileImage(File(empDataList.first.image!))
-                  : null,
-              child: empDataList.first.image == null
-                  ? Icon(
-                      Icons.person,
-                      color: Colors.white,
-                    )
-                  : null,
+              child: empDataList.first.image == null ?Icon(Icons.person,color: Colors.white,): null,
+              backgroundImage: empDataList.first.image != null ? FileImage(File(empDataList.first.image!)): null,
             ),
           )
         ],
@@ -168,7 +161,8 @@ class _EmployeeDashboardState extends State<EmployeeDashboard> {
                   currentAccountPictureSize: Size.square(50),
                   currentAccountPicture: CircleAvatar(
                     backgroundColor: Color.fromARGB(255, 165, 255, 137),
-                    child: const Icon(Icons.person, color: Colors.blue), //Text
+                    child: empDataList.first.image == null ?Icon(Icons.person,color: Colors.white,): null,
+                    backgroundImage: empDataList.first.image != null ? FileImage(File(empDataList.first.image!)): null, //Text
                   ), //circleAvatar
                 ),
               ), //UserAccountDrawerHeader
@@ -200,322 +194,322 @@ class _EmployeeDashboardState extends State<EmployeeDashboard> {
       body: SafeArea(
         child: isLogin
             ? Center(
-                child: CircularProgressIndicator(),
-              )
+          child: CircularProgressIndicator(),
+        )
             : BlocProvider<EmpDashBloc>(
-                create: (context) => EmpDashBloc(),
-                child: BlocBuilder<EmpDashBloc, EmpDashState>(
-                  builder: (context, state) {
-                    return Container(
-                      // padding: EdgeInsets.fromLTRB(15, 20, 15, 0),
-                      height: MediaQuery.of(context).size.height,
-                      width: MediaQuery.of(context).size.width,
-                      child: SingleChildScrollView(
-                        child: Column(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(10, 15, 10, 0),
-                              child: EasyDateTimeLine(
-                                initialDate: DateTime.now(),
-                                headerProps: EasyHeaderProps(
-                                    selectedDateStyle: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold),
-                                    monthPickerType: MonthPickerType.switcher,
-                                    monthStyle: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold)),
-                                dayProps: EasyDayProps(
-                                    dayStructure:
-                                        DayStructure.dayStrDayNumMonth,
-                                    activeDayStyle: DayStyle(
-                                      decoration: BoxDecoration(
-                                        gradient: LinearGradient(
-                                          colors: [
-                                            Color(0xff3371FF),
-                                            Color(0xff8426D6)
-                                          ],
-                                          begin: Alignment.topCenter,
-                                          end: Alignment.bottomCenter,
-                                        ),
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(10)),
-                                      ),
-                                    ),
-                                    todayHighlightColor: Color(0xffc8eccc),
-                                    todayHighlightStyle:
-                                        TodayHighlightStyle.withBackground),
-                              ),
-                            ),
-                            SizedBox(
-                              height: 20,
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
-                              child: Container(
-                                padding: EdgeInsets.only(bottom: 10),
-                                child: Column(
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Align(
-                                          alignment: Alignment.centerLeft,
-                                          child: Text(
-                                            "Today's Tasks",
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 20),
-                                          ),
-                                        ),
-                                        TextButton(
-                                            onPressed: () {},
-                                            child: Text(
-                                              "Show all",
-                                              style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: 15),
-                                            ))
-                                      ],
-                                    ),
-                                    SizedBox(
-                                      height: 5,
-                                    ),
-                                    Container(
-                                      width: MediaQuery.of(context).size.width,
-                                      height:
-                                          MediaQuery.of(context).size.height *
-                                              0.2,
-                                      child: ListView.builder(
-                                          scrollDirection: Axis.horizontal,
-                                          itemCount: taskDataList.length,
-                                          itemBuilder: (context, index) {
-                                            final taskList =
-                                                taskDataList[index];
-                                            final id = taskId[index] as int;
-                                            return Utility().taskContainerUtil(
-                                                context,
-                                                taskList.title!,
-                                                taskList.description!,
-                                                taskList.status!,
-                                                taskList.assigned_by!,
-                                                () async {
-                                              print(
-                                                  "$id status ${taskList.status}");
-                                              await updateTaskStatus(id as int);
-                                              print(
-                                                  "$id status ${taskList.status}");
-                                              setState(() {});
-                                              print("REBUILD");
-                                              Navigator.of(context).pop();
-                                            });
-                                          }),
-                                    ),
-                                    SizedBox(
-                                      height: 5,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Stack(
-                              children: [
-                                Padding(
-                                  padding:
-                                      const EdgeInsets.fromLTRB(15, 0, 15, 0),
-                                  child: Container(
-                                    height: MediaQuery.of(context).size.height *
-                                        0.25,
-                                    width: MediaQuery.of(context).size.width,
-                                    decoration: BoxDecoration(
-                                      color: Color(0xFFADEDE3),
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(20)),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.black.withOpacity(0.4),
-                                          spreadRadius: 2,
-                                          blurRadius: 8,
-                                          offset: Offset(-2, 4),
-                                        ),
-                                      ],
-                                    ),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Padding(
-                                          padding: const EdgeInsets.fromLTRB(
-                                              15, 20, 0, 20),
-                                          child: Align(
-                                            alignment: Alignment.centerLeft,
-                                            child: Text(
-                                              "Today's Progress",
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 20,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        Row(
-                                          children: [
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsets.fromLTRB(
-                                                      20, 0, 0, 0),
-                                              child: Container(
-                                                height: 30,
-                                                width: 50,
-                                                // margin: EdgeInsets.all(10),
-                                                decoration: BoxDecoration(
-                                                  color: Color(0xFF42F1A8),
-                                                  borderRadius:
-                                                      BorderRadius.all(
-                                                          Radius.circular(20)),
-                                                ),
-                                                child: Center(
-                                                    child: Text(
-                                                        "$completedTasks/$totalTasks")),
-                                              ),
-                                            ),
-                                            Padding(
-                                              padding: const EdgeInsets.only(
-                                                  left: 10),
-                                              child: Text(
-                                                "Task",
-                                                style: TextStyle(
-                                                  fontSize: 18,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.fromLTRB(
-                                              35, 10, 0, 10),
-                                          child: Text(
-                                            "You have marked $completedTasks/$totalTasks\ncompleted 🎉",
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.fromLTRB(
-                                              20, 0, 0, 0),
-                                          child: ElevatedButton(
-                                            onPressed: () {},
-                                            style: ElevatedButton.styleFrom(
-                                              elevation: 10,
-                                              backgroundColor:
-                                                  Color(0xFF42F1A8),
-                                            ),
-                                            child: Text(
-                                              "All Tasks",
-                                              style: TextStyle(
-                                                  color: Colors.black),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
+          create: (context) => EmpDashBloc(),
+          child: BlocBuilder<EmpDashBloc, EmpDashState>(
+            builder: (context, state) {
+              return Container(
+                // padding: EdgeInsets.fromLTRB(15, 20, 15, 0),
+                height: MediaQuery.of(context).size.height,
+                width: MediaQuery.of(context).size.width,
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(10, 15, 10, 0),
+                        child: EasyDateTimeLine(
+                          initialDate: DateTime.now(),
+                          headerProps: EasyHeaderProps(
+                              selectedDateStyle: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold),
+                              monthPickerType: MonthPickerType.switcher,
+                              monthStyle: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold)),
+                          dayProps: EasyDayProps(
+                              dayStructure:
+                              DayStructure.dayStrDayNumMonth,
+                              activeDayStyle: DayStyle(
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    colors: [
+                                      Color(0xff3371FF),
+                                      Color(0xff8426D6)
+                                    ],
+                                    begin: Alignment.topCenter,
+                                    end: Alignment.bottomCenter,
                                   ),
-                                ),
-                                Positioned(
-                                  top: 60,
-                                  right: 35,
-                                  child: SizedBox(
-                                    height: 120,
-                                    width: 120,
-                                    child: SfRadialGauge(axes: <RadialAxis>[
-                                      RadialAxis(
-                                        minimum: 0,
-                                        maximum: 100,
-                                        showLabels: false,
-                                        showTicks: false,
-                                        axisLineStyle: AxisLineStyle(
-                                          thickness: 0.2,
-                                          cornerStyle: CornerStyle.bothCurve,
-                                          color: Colors.white,
-                                          thicknessUnit: GaugeSizeUnit.factor,
-                                        ),
-                                        pointers: [
-                                          RangePointer(
-                                            value: taskProgress,
-                                            width: 14,
-                                            color: Colors.lightBlueAccent,
-                                            cornerStyle: CornerStyle.bothCurve,
-                                          )
-                                        ],
-                                        annotations: [
-                                          GaugeAnnotation(
-                                            widget: Text(
-                                              "${taskProgress.toStringAsFixed(0)}%",
-                                              style: TextStyle(
-                                                fontSize: 22,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ]),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(
-                              height: 30,
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
-                              child: Container(
-                                // color: Colors.red,
-                                child: Column(
-                                  children: [
-                                    Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: Text(
-                                        "Tasks Assigned By",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 20),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      height: 30,
-                                    ),
-                                    ListView.builder(
-                                      padding: EdgeInsets.zero,
-                                      shrinkWrap: true,
-                                      itemCount: mngDataList.length,
-                                      itemBuilder: (context, index) {
-                                        final mngList = mngDataList[index];
-                                        return Utility().mngContainerUtil(
-                                            context,
-                                            mngList.mname!,
-                                            mngList.memail!,
-                                            mngList.mcontact!,
-                                            mngList.mimage ??
-                                                "https://img.freepik.com/free-psd/3d-illustration-person-with-sunglasses_23-2149436188.jpg?size=338&ext=jpg&ga=GA1.1.2008272138.1723593600&semt=ais_hybrid");
-                                      },
-                                    ),
-                                  ],
+                                  borderRadius: BorderRadius.all(
+                                      Radius.circular(10)),
                                 ),
                               ),
-                            ),
-                            SizedBox(
-                              height: 40,
-                            ),
-                          ],
+                              todayHighlightColor: Color(0xffc8eccc),
+                              todayHighlightStyle:
+                              TodayHighlightStyle.withBackground),
                         ),
                       ),
-                    );
-                  },
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
+                        child: Container(
+                          padding: EdgeInsets.only(bottom: 10),
+                          child: Column(
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                      "Today's Tasks",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 20),
+                                    ),
+                                  ),
+                                  TextButton(
+                                      onPressed: () {},
+                                      child: Text(
+                                        "Show all",
+                                        style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 15),
+                                      ))
+                                ],
+                              ),
+                              SizedBox(
+                                height: 5,
+                              ),
+                              Container(
+                                width: MediaQuery.of(context).size.width,
+                                height:
+                                MediaQuery.of(context).size.height *
+                                    0.2,
+                                child: ListView.builder(
+                                    scrollDirection: Axis.horizontal,
+                                    itemCount: taskDataList.length,
+                                    itemBuilder: (context, index) {
+                                      final taskList =
+                                      taskDataList[index];
+                                      final id = taskId[index] as int;
+                                      return Utility().taskContainerUtil(
+                                          context,
+                                          taskList.title!,
+                                          taskList.description!,
+                                          taskList.status!,
+                                          taskList.assigned_by!,
+                                              () async {
+                                            print(
+                                                "$id status ${taskList.status}");
+                                            await updateTaskStatus(id as int);
+                                            print(
+                                                "$id status ${taskList.status}");
+                                            setState(() {});
+                                            print("REBUILD");
+                                            Navigator.of(context).pop();
+                                          });
+                                    }),
+                              ),
+                              SizedBox(
+                                height: 5,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Stack(
+                        children: [
+                          Padding(
+                            padding:
+                            const EdgeInsets.fromLTRB(15, 0, 15, 0),
+                            child: Container(
+                              height: MediaQuery.of(context).size.height *
+                                  0.25,
+                              width: MediaQuery.of(context).size.width,
+                              decoration: BoxDecoration(
+                                color: Color(0xFFADEDE3),
+                                borderRadius:
+                                BorderRadius.all(Radius.circular(20)),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.4),
+                                    spreadRadius: 2,
+                                    blurRadius: 8,
+                                    offset: Offset(-2, 4),
+                                  ),
+                                ],
+                              ),
+                              child: Column(
+                                crossAxisAlignment:
+                                CrossAxisAlignment.start,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.fromLTRB(
+                                        15, 20, 0, 20),
+                                    child: Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(
+                                        "Today's Progress",
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 20,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Row(
+                                    children: [
+                                      Padding(
+                                        padding:
+                                        const EdgeInsets.fromLTRB(
+                                            20, 0, 0, 0),
+                                        child: Container(
+                                          height: 30,
+                                          width: 50,
+                                          // margin: EdgeInsets.all(10),
+                                          decoration: BoxDecoration(
+                                            color: Color(0xFF42F1A8),
+                                            borderRadius:
+                                            BorderRadius.all(
+                                                Radius.circular(20)),
+                                          ),
+                                          child: Center(
+                                              child: Text(
+                                                  "$completedTasks/$totalTasks")),
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                            left: 10),
+                                        child: Text(
+                                          "Task",
+                                          style: TextStyle(
+                                            fontSize: 18,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.fromLTRB(
+                                        35, 10, 0, 10),
+                                    child: Text(
+                                      "You have marked $completedTasks/$totalTasks\ncompleted 🎉",
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.fromLTRB(
+                                        20, 0, 0, 0),
+                                    child: ElevatedButton(
+                                      onPressed: () {},
+                                      style: ElevatedButton.styleFrom(
+                                        elevation: 10,
+                                        backgroundColor:
+                                        Color(0xFF42F1A8),
+                                      ),
+                                      child: Text(
+                                        "All Tasks",
+                                        style: TextStyle(
+                                            color: Colors.black),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                            top: 60,
+                            right: 35,
+                            child: SizedBox(
+                              height: 120,
+                              width: 120,
+                              child: SfRadialGauge(axes: <RadialAxis>[
+                                RadialAxis(
+                                  minimum: 0,
+                                  maximum: 100,
+                                  showLabels: false,
+                                  showTicks: false,
+                                  axisLineStyle: AxisLineStyle(
+                                    thickness: 0.2,
+                                    cornerStyle: CornerStyle.bothCurve,
+                                    color: Colors.white,
+                                    thicknessUnit: GaugeSizeUnit.factor,
+                                  ),
+                                  pointers: [
+                                    RangePointer(
+                                      value: taskProgress,
+                                      width: 14,
+                                      color: Colors.lightBlueAccent,
+                                      cornerStyle: CornerStyle.bothCurve,
+                                    )
+                                  ],
+                                  annotations: [
+                                    GaugeAnnotation(
+                                      widget: Text(
+                                        "${taskProgress.toStringAsFixed(0)}%",
+                                        style: TextStyle(
+                                          fontSize: 22,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ]),
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 30,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
+                        child: Container(
+                          // color: Colors.red,
+                          child: Column(
+                            children: [
+                              Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  "Tasks Assigned By",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 20),
+                                ),
+                              ),
+                              SizedBox(
+                                height: 30,
+                              ),
+                              ListView.builder(
+                                padding: EdgeInsets.zero,
+                                shrinkWrap: true,
+                                itemCount: mngDataList.length,
+                                itemBuilder: (context, index) {
+                                  final mngList = mngDataList[index];
+                                  return Utility().mngContainerUtil(
+                                      context,
+                                      mngList.mname!,
+                                      mngList.memail!,
+                                      mngList.mcontact!,
+                                      mngList.mimage ?? ""
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 40,
+                      ),
+                    ],
+                  ),
                 ),
-              ),
+              );
+            },
+          ),
+        ),
       ),
     );
   }

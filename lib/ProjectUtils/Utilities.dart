@@ -18,7 +18,7 @@ class Utility {
       String errormsg,
       String exp,
       {bool isSuffix = false,
-      TextInputType textinput = TextInputType.text}) {
+        TextInputType textinput = TextInputType.text}) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
       child: TextFormField(
@@ -29,7 +29,7 @@ class Utility {
             suffixIcon: isSuffix ? Icon(Icons.remove_red_eye) : null,
             focusedBorder: OutlineInputBorder(
                 borderSide:
-                    BorderSide(width: 2, color: Theme.of(context).primaryColor),
+                BorderSide(width: 2, color: Theme.of(context).primaryColor),
                 borderRadius: BorderRadius.all(Radius.circular(10))),
             border: OutlineInputBorder(
                 borderSide: BorderSide(color: Theme.of(context).primaryColor),
@@ -88,19 +88,19 @@ class Utility {
         backgroundColor: Colors.red,
         action: isActionButton
             ? SnackBarAction(
-                label: label!, textColor: Colors.black, onPressed: onPressed!)
+            label: label!, textColor: Colors.black, onPressed: onPressed!)
             : null,
       ));
   }
 
   Widget taskContainerUtil(
-    BuildContext context,
-    String taskTitle,
-    String taskDes,
-    String taskStatus,
-    String taskAssigedby,
-    VoidCallback onSubmit,
-  ) {
+      BuildContext context,
+      String taskTitle,
+      String taskDes,
+      String taskStatus,
+      String taskAssigedby,
+      VoidCallback onSubmit,
+      ) {
     return Padding(
       padding: const EdgeInsets.only(right: 10, left: 15),
       child: Container(
@@ -109,7 +109,7 @@ class Utility {
         margin: EdgeInsets.only(top: 5, bottom: 15),
         decoration: BoxDecoration(
           color:
-              taskStatus == "pending" ? Color(0xFF789FCB) : Color(0xFF42F1A8),
+          taskStatus == "pending" ? Color(0xFF789FCB) : Color(0xFF42F1A8),
           border: Border.all(width: 2, color: Colors.blue.shade200),
           borderRadius: BorderRadius.all(
             Radius.circular(20),
@@ -149,7 +149,7 @@ class Utility {
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         color:
-                            taskStatus == "pending" ? Colors.red : Colors.green,
+                        taskStatus == "pending" ? Colors.red : Colors.green,
                         fontSize: 18,
                       ),
                     ),
@@ -186,7 +186,7 @@ class Utility {
                                       color: Colors.blueAccent.shade200,
                                     ),
                                     borderRadius:
-                                        BorderRadius.all(Radius.circular(20)),
+                                    BorderRadius.all(Radius.circular(20)),
                                   ),
                                   padding: EdgeInsets.all(12),
                                   child: RichText(
@@ -222,7 +222,7 @@ class Utility {
                                       color: Colors.blueAccent.shade200,
                                     ),
                                     borderRadius:
-                                        BorderRadius.all(Radius.circular(20)),
+                                    BorderRadius.all(Radius.circular(20)),
                                   ),
                                   padding: EdgeInsets.all(12),
                                   child: RichText(
@@ -301,12 +301,12 @@ class Utility {
   }
 
   Widget mngContainerUtil(
-    BuildContext context,
-    String mngName,
-    String mngEmail,
-    String mngContact,
-    String mngImage,
-  ) {
+      BuildContext context,
+      String mngName,
+      String mngEmail,
+      String mngContact,
+      String mngImage,
+      ) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(15, 0, 15, 15),
       child: Container(
@@ -335,12 +335,9 @@ class Utility {
                 border: Border.all(color: Colors.black),
                 image: DecorationImage(
                   fit: BoxFit.cover,
-                  image: NetworkImage(mngImage ??
-                      "https://img.freepik.com/free-psd/3d-illustration-person-with-sunglasses_23-2149436188.jpg?size=338&ext=jpg&ga=GA1.1.2008272138.1723593600&semt=ais_hybrid"),
-                  // image: FileImage(
-                  //   File(mngImage ??
-                  //       "https://img.freepik.com/free-psd/3d-illustration-person-with-sunglasses_23-2149436188.jpg?size=338&ext=jpg&ga=GA1.1.2008272138.1723593600&semt=ais_hybrid"),
-                  // ),
+                  image: mngImage != "" ?
+                  FileImage(File(mngImage)):
+                  NetworkImage("https://img.freepik.com/free-psd/3d-illustration-person-with-sunglasses_23-2149436188.jpg?size=338&ext=jpg&ga=GA1.1.2008272138.1723593600&semt=ais_hybrid"),
                 ),
               ),
             ),

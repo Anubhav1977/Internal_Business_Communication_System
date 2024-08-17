@@ -94,9 +94,8 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
                   currentAccountPictureSize: Size.square(50),
                   currentAccountPicture: CircleAvatar(
                     backgroundColor: Color.fromARGB(255, 165, 255, 137),
-                    child: const Icon(
-                        Icons.person,
-                        color: Colors.blue),//Text
+                    child: _managerImage == null ?Icon(Icons.person,color: Colors.white,): null,
+                    backgroundImage: _managerImage != null ? FileImage(File(_managerImage)): null,//Text
                   ), //circleAvatar
                 ),
               ), //UserAccountDrawerHeader
@@ -141,10 +140,8 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
                     decoration: BoxDecoration(border: Border.all(color: Colors.black),borderRadius: BorderRadius.all(Radius.circular(30))),
                     child: CircleAvatar(
                       backgroundColor: Colors.green,
-                      //Todo change here
-                      child: _managerImage == null ?Icon(Icons.person,color: Colors.white,): null,
-                      backgroundImage: _managerImage != null ? FileImage(File(_managerImage)): null,
-                      //todo end here
+                      child: _edata[index]['image'] == null ?Icon(Icons.person,color: Colors.white,): null,
+                      backgroundImage: _edata[index]['image'] != null ? FileImage(File(_edata[index]['image'])): null,
                     ),
                   ),
                   title: Text(_edata[index]['name'],style: TextStyle(color: Colors.green,fontWeight: FontWeight.bold)),
