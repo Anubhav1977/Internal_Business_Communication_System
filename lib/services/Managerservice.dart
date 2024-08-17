@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:sqflite/sqflite.dart';
 
-import '../Database.dart';
+import '../Database/Database.dart';
 
 class Manager {
   String? mId;

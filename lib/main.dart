@@ -7,7 +7,7 @@ import 'package:inter_business_comm_system/screens/SignupScreen.dart';
 import 'package:inter_business_comm_system/services/Employeeservice.dart';
 import 'package:inter_business_comm_system/services/Managerservice.dart';
 import 'package:inter_business_comm_system/services/taskservice.dart';
-import 'Database.dart';
+import 'Database/Database.dart';
 
 void main() {
   runApp(MyApp());
@@ -51,13 +51,14 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       theme: lightTheme,
       routes: {
+        "/HomeScreen": (context) => HomeScreen(),
         "/LoginScreen": (context) => LoginScreen(),
         "/SignupScreen": (context) => SignupScreen(),
         "/EmployeeDashboard": (context) => EmployeeDashboard(),
         "/ManagerDashboard": (context) => ManagerDashboard(),
       },
       debugShowCheckedModeBanner: false,
-      home: HomeScreen(),
+      home: LoginScreen(),
     );
   }
 }

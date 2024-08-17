@@ -8,10 +8,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:inter_business_comm_system/ProjectUtils/Utilities.dart';
 import 'package:inter_business_comm_system/services/Employeeservice.dart';
 import 'package:inter_business_comm_system/services/Managerservice.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
-import 'package:url_launcher/url_launcher.dart';
-import '../Database.dart';
+import '../Database/Database.dart';
 import '../services/taskservice.dart';
 
 class EmployeeDashboard extends StatefulWidget {
@@ -34,7 +34,22 @@ class _EmployeeDashboardState extends State<EmployeeDashboard> {
   int completedTasks = 0;
   List<dynamic> taskId = [];
   String? id;
-  bool isLogin = true; // Show loader initially
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final routeargs = ModalRoute.of(context)!.settings.arguments;
+      if (routeargs is String) {
+        id = routeargs;
+        fetchData();
+      } else {
+        print("$id");
+      }
+    });
+  }
 
   // Method to update the task status in the database
   updateTaskStatus(int taskId) async {
@@ -58,459 +73,537 @@ class _EmployeeDashboardState extends State<EmployeeDashboard> {
   fetchData() async {
     print("Fetching data for employee ID: $id");
 
-    // Fetch employee data
-    empDataList = await AppDataBase().getEmpdbInfo(id!);
+    try {
+      // Fetch employee data
+      empDataList = await AppDataBase().getEmpdbInfo(id!);
 
-    // Fetch task data
-    taskDataList = await AppDataBase().getTaskdbInfo(id!);
+      // Fetch task data
+      taskDataList = await AppDataBase().getTaskdbInfo(id!);
 
-    // Fetch pending task data
-    pendingTaskList = await AppDataBase().getPendingTaskdbInfo(id!);
+      // Fetch pending task data
+      pendingTaskList = await AppDataBase().getPendingTaskdbInfo(id!);
 
-    // Fetch task IDs
-    taskId = await AppDataBase().getTaskId(id!);
-    print("Data fetched, total tasks: ${taskDataList.length}");
+      // Fetch task IDs
+      taskId = await AppDataBase().getTaskId(id!);
+      print("Data fetched, total tasks: ${taskDataList.length}");
 
-    // Safeguard against empty lists
-    if (empDataList.isNotEmpty) {
-      empName = empDataList.first.name!;
-    }
-
-    if (taskDataList.isNotEmpty) {
-      taskTitle = taskDataList.first.title!;
-    }
-
-    totalTasks = taskDataList.length;
-
-    print("Fetching manager data");
-
-    // Fetch manager IDs from tasks
-    managerIds = taskDataList.map((task) => task.assigned_by).toList();
-
-    // Fetch manager data based on manager IDs
-    mngDataList = await AppDataBase().getManagerdbInfo(managerIds);
-    print("Fetched manager data");
-
-    // Calculate completed tasks
-    completedTasks =
-        taskDataList.where((task) => task.status == 'completed').length;
-    print("Completed tasks: $completedTasks");
-
-    // Disable loader and update UI
-    setState(() {
-      isLogin = false;
-    });
-  }
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final routeargs = ModalRoute.of(context)!.settings.arguments;
-      if (routeargs is String) {
-        id = routeargs;
-        fetchData();
-      } else {
-        print("$id");
+      // Safeguard against empty lists
+      if (empDataList.isNotEmpty) {
+        empName = empDataList.first.name!;
       }
-    });
+
+      if (taskDataList.isNotEmpty) {
+        taskTitle = taskDataList.first.title!;
+      }
+
+      totalTasks = taskDataList.length;
+
+      print("Fetching manager data");
+
+      // Fetch manager IDs from tasks
+      managerIds = taskDataList.map((task) => task.assigned_by).toList();
+
+      // Fetch manager data based on manager IDs
+      mngDataList = await AppDataBase().getManagerdbInfo(managerIds);
+      print("Fetched manager data");
+
+      // Calculate completed tasks
+      completedTasks =
+          taskDataList.where((task) => task.status == 'completed').length;
+      print("Completed tasks: $completedTasks");
+    } catch (error) {
+      print("Error fetching data: $error");
+    } finally {
+      // Disable loader and update UI
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     double taskProgress =
-    totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
+        totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
 
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
+        // Transparent background for the AppBar
         backgroundColor: Colors.transparent,
-        title: Text(empName),
+
+        // Title of the AppBar, defaults to 'Employee' if empName is null or empty
+        title: Text(empName ?? 'Employee'),
+
         actions: [
+          // Notification button with no action implemented
           IconButton(
-              onPressed: () {},
-              icon: Icon(Icons.notifications_active_outlined)),
+            onPressed: () {
+              // Add functionality here
+            },
+            icon: Icon(Icons.notifications_active_outlined),
+          ),
+
+          // Padding for the avatar to ensure it's spaced from the edge
           Padding(
             padding: const EdgeInsets.fromLTRB(10, 0, 20, 0),
             child: CircleAvatar(
               backgroundColor: Colors.blueAccent,
               radius: 20,
-              child: empDataList.first.image == null ?Icon(Icons.person,color: Colors.white,): null,
-              backgroundImage: empDataList.first.image != null ? FileImage(File(empDataList.first.image!)): null,
+
+              // Conditionally set the background image of the avatar
+              backgroundImage:
+                  empDataList.isNotEmpty && empDataList.first.image != null
+                      ? FileImage(File(empDataList.first.image!))
+                      : null,
+
+              // If there is no image, show a default icon
+              child: empDataList.isNotEmpty && empDataList.first.image == null
+                  ? Icon(
+                      Icons.person,
+                      color: Colors.white,
+                    )
+                  : null,
             ),
-          )
+          ),
         ],
       ),
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.all(0),
           children: [
+            // Drawer Header
             DrawerHeader(
               decoration: BoxDecoration(
-                color: Colors.green,
-              ), //BoxDecoration
+                color: Colors.green, // Background color for DrawerHeader
+              ),
               child: Center(
                 child: UserAccountsDrawerHeader(
                   decoration: BoxDecoration(color: Colors.green),
+                  // Background color for UserAccountsDrawerHeader
                   accountName: Text(
-                    empName,
+                    empName ?? 'Name Not Available',
+                    // Fallback text if empName is null
                     style: TextStyle(fontSize: 15),
                   ),
-                  accountEmail: Text(empDataList.first.email!),
+                  accountEmail: Text(
+                    empDataList.isNotEmpty && empDataList.first.email != null
+                        ? empDataList.first.email!
+                        : 'Email Not Available', // Fallback text if email is null or list is empty
+                  ),
                   currentAccountPictureSize: Size.square(50),
+                  // Size of the profile picture
                   currentAccountPicture: CircleAvatar(
                     backgroundColor: Color.fromARGB(255, 165, 255, 137),
-                    child: empDataList.first.image == null ?Icon(Icons.person,color: Colors.white,): null,
-                    backgroundImage: empDataList.first.image != null ? FileImage(File(empDataList.first.image!)): null, //Text
-                  ), //circleAvatar
+                    // Background color for the CircleAvatar
+                    backgroundImage: empDataList.isNotEmpty &&
+                            empDataList.first.image != null
+                        ? FileImage(File(empDataList.first.image!))
+                        : null,
+                    // Use FileImage if image is available
+                    child: empDataList.isNotEmpty &&
+                            empDataList.first.image == null
+                        ? Icon(
+                            Icons.person,
+                            color: Colors.white, // Default icon color
+                          )
+                        : null, // Use default icon if image is null
+                  ),
                 ),
-              ), //UserAccountDrawerHeader
-            ), //DrawerHeader
+              ),
+            ),
+
+            // Contact Information
             ListTile(
               leading: const Icon(Icons.phone),
-              title: Text(empDataList.first.contact!),
+              title: Text(
+                empDataList.isNotEmpty && empDataList.first.contact != null
+                    ? empDataList.first.contact!
+                    : 'Contact Not Available', // Fallback text if contact is null or list is empty
+              ),
               onTap: () {
                 Navigator.pop(context);
               },
             ),
+
+            // Designation Information
             ListTile(
               leading: const Icon(Icons.password),
-              title: Text(empDataList.first.designation!),
+              title: Text(
+                empDataList.isNotEmpty && empDataList.first.designation != null
+                    ? empDataList.first.designation!
+                    : 'Designation Not Available', // Fallback text if designation is null or list is empty
+              ),
               onTap: () {
                 Navigator.pop(context);
               },
             ),
+
+            // Logout Option
             ListTile(
               leading: const Icon(Icons.logout),
               title: const Text('LogOut'),
-              onTap: () {
-                Navigator.pop(context);
+              onTap: () async {
+                // Clear user session data from SharedPreferences
+                final SharedPreferences prefs =
+                    await SharedPreferences.getInstance();
+                await prefs.setBool('isLogin', false);
+                await prefs.setBool('isManager', false);
+
+                // Navigate back to HomeScreen and remove all previous routes
+                Navigator.pushNamedAndRemoveUntil(
+                    context, '/LoginScreen', (route) => false);
               },
             ),
           ],
         ),
       ),
-      body: SafeArea(
-        child: isLogin
-            ? Center(
-          child: CircularProgressIndicator(),
-        )
-            : BlocProvider<EmpDashBloc>(
-          create: (context) => EmpDashBloc(),
-          child: BlocBuilder<EmpDashBloc, EmpDashState>(
-            builder: (context, state) {
-              return Container(
-                // padding: EdgeInsets.fromLTRB(15, 20, 15, 0),
-                height: MediaQuery.of(context).size.height,
-                width: MediaQuery.of(context).size.width,
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(10, 15, 10, 0),
-                        child: EasyDateTimeLine(
-                          initialDate: DateTime.now(),
-                          headerProps: EasyHeaderProps(
-                              selectedDateStyle: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold),
-                              monthPickerType: MonthPickerType.switcher,
-                              monthStyle: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold)),
-                          dayProps: EasyDayProps(
-                              dayStructure:
-                              DayStructure.dayStrDayNumMonth,
-                              activeDayStyle: DayStyle(
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    colors: [
-                                      Color(0xff3371FF),
-                                      Color(0xff8426D6)
-                                    ],
-                                    begin: Alignment.topCenter,
-                                    end: Alignment.bottomCenter,
+      body: isLoading
+          ? Center(child: CircularProgressIndicator())
+          : SafeArea(
+              child: BlocProvider<EmpDashBloc>(
+                create: (context) => EmpDashBloc(),
+                child: BlocBuilder<EmpDashBloc, EmpDashState>(
+                  builder: (context, state) {
+                    return SizedBox(
+                      height: MediaQuery.of(context).size.height,
+                      width: MediaQuery.of(context).size.width,
+                      child: SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            // Date Time Line
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(10, 15, 10, 0),
+                              child: EasyDateTimeLine(
+                                initialDate: DateTime.now(),
+                                headerProps: EasyHeaderProps(
+                                  selectedDateStyle: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
                                   ),
-                                  borderRadius: BorderRadius.all(
-                                      Radius.circular(10)),
+                                  monthPickerType: MonthPickerType.switcher,
+                                  monthStyle: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
-                              ),
-                              todayHighlightColor: Color(0xffc8eccc),
-                              todayHighlightStyle:
-                              TodayHighlightStyle.withBackground),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
-                        child: Container(
-                          padding: EdgeInsets.only(bottom: 10),
-                          child: Column(
-                            children: [
-                              Row(
-                                mainAxisAlignment:
-                                MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: Text(
-                                      "Today's Tasks",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 20),
+                                dayProps: EasyDayProps(
+                                  dayStructure: DayStructure.dayStrDayNumMonth,
+                                  activeDayStyle: DayStyle(
+                                    decoration: BoxDecoration(
+                                      gradient: LinearGradient(
+                                        colors: [
+                                          Color(0xff3371FF),
+                                          Color(0xff8426D6),
+                                        ],
+                                        begin: Alignment.topCenter,
+                                        end: Alignment.bottomCenter,
+                                      ),
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(10)),
                                     ),
                                   ),
-                                  TextButton(
-                                      onPressed: () {},
-                                      child: Text(
-                                        "Show all",
-                                        style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 15),
-                                      ))
-                                ],
+                                  todayHighlightColor: Color(0xffc8eccc),
+                                  todayHighlightStyle:
+                                      TodayHighlightStyle.withBackground,
+                                ),
                               ),
-                              SizedBox(
-                                height: 5,
+                            ),
+                            SizedBox(height: 20),
+
+                            // Today's Tasks Section
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
+                              child: Container(
+                                padding: EdgeInsets.only(bottom: 10),
+                                child: Column(
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Align(
+                                          alignment: Alignment.centerLeft,
+                                          child: Text(
+                                            "Today's Tasks",
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 20,
+                                            ),
+                                          ),
+                                        ),
+                                        TextButton(
+                                          onPressed: () {
+                                            // Navigator.
+                                          },
+                                          child: Text(
+                                            "Show all",
+                                            style: TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 15,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(height: 5),
+                                    Container(
+                                      width: MediaQuery.of(context).size.width,
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              0.2,
+                                      child: ListView.builder(
+                                        scrollDirection: Axis.horizontal,
+                                        itemCount: taskDataList.length,
+                                        itemBuilder: (context, index) {
+                                          final taskList =
+                                              taskDataList.isNotEmpty
+                                                  ? taskDataList[index]
+                                                  : null;
+                                          final id = taskId.isNotEmpty
+                                              ? taskId[index] as int
+                                              : null;
+
+                                          if (taskList == null || id == null) {
+                                            return SizedBox
+                                                .shrink(); // Return an empty widget if data is null
+                                          }
+
+                                          return Utility().taskContainerUtil(
+                                            context,
+                                            taskList.title ?? 'No Title',
+                                            taskList.description ??
+                                                'No Description',
+                                            taskList.status ?? 'No Status',
+                                            taskList.assigned_by ?? 'Unknown',
+                                            () async {
+                                              print(
+                                                  "$id status ${taskList.status}");
+                                              await updateTaskStatus(id);
+                                              print(
+                                                  "$id status ${taskList.status}");
+                                              setState(() {});
+                                              print("REBUILD");
+                                              Navigator.of(context).pop();
+                                            },
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                    SizedBox(height: 5),
+                                  ],
+                                ),
                               ),
-                              Container(
-                                width: MediaQuery.of(context).size.width,
-                                height:
-                                MediaQuery.of(context).size.height *
-                                    0.2,
-                                child: ListView.builder(
-                                    scrollDirection: Axis.horizontal,
-                                    itemCount: taskDataList.length,
-                                    itemBuilder: (context, index) {
-                                      final taskList =
-                                      taskDataList[index];
-                                      final id = taskId[index] as int;
-                                      return Utility().taskContainerUtil(
-                                          context,
-                                          taskList.title!,
-                                          taskList.description!,
-                                          taskList.status!,
-                                          taskList.assigned_by!,
-                                              () async {
-                                            print(
-                                                "$id status ${taskList.status}");
-                                            await updateTaskStatus(id as int);
-                                            print(
-                                                "$id status ${taskList.status}");
-                                            setState(() {});
-                                            print("REBUILD");
-                                            Navigator.of(context).pop();
-                                          });
-                                    }),
-                              ),
-                              SizedBox(
-                                height: 5,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Stack(
-                        children: [
-                          Padding(
-                            padding:
-                            const EdgeInsets.fromLTRB(15, 0, 15, 0),
-                            child: Container(
-                              height: MediaQuery.of(context).size.height *
-                                  0.25,
-                              width: MediaQuery.of(context).size.width,
-                              decoration: BoxDecoration(
-                                color: Color(0xFFADEDE3),
-                                borderRadius:
-                                BorderRadius.all(Radius.circular(20)),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.4),
-                                    spreadRadius: 2,
-                                    blurRadius: 8,
-                                    offset: Offset(-2, 4),
+                            ),
+                            SizedBox(height: 10),
+
+                            // Today's Progress Section
+                            Stack(
+                              children: [
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(15, 0, 15, 0),
+                                  child: Container(
+                                    height: MediaQuery.of(context).size.height *
+                                        0.25,
+                                    width: MediaQuery.of(context).size.width,
+                                    decoration: BoxDecoration(
+                                      color: Color(0xFFADEDE3),
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(20)),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withOpacity(0.4),
+                                          spreadRadius: 2,
+                                          blurRadius: 8,
+                                          offset: Offset(-2, 4),
+                                        ),
+                                      ],
+                                    ),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.fromLTRB(
+                                              15, 20, 0, 20),
+                                          child: Align(
+                                            alignment: Alignment.centerLeft,
+                                            child: Text(
+                                              "Today's Progress",
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 20,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        Row(
+                                          children: [
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.fromLTRB(
+                                                      20, 0, 0, 0),
+                                              child: Container(
+                                                height: 30,
+                                                width: 50,
+                                                decoration: BoxDecoration(
+                                                  color: Color(0xFF42F1A8),
+                                                  borderRadius:
+                                                      BorderRadius.all(
+                                                          Radius.circular(20)),
+                                                ),
+                                                child: Center(
+                                                  child: Text(
+                                                    "$completedTasks/$totalTasks",
+                                                    style:
+                                                        TextStyle(fontSize: 14),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  left: 10),
+                                              child: Text(
+                                                "Task",
+                                                style: TextStyle(
+                                                  fontSize: 18,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.fromLTRB(
+                                              35, 10, 0, 10),
+                                          child: Text(
+                                            "You have marked $completedTasks/$totalTasks completed 🎉",
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.fromLTRB(
+                                              20, 0, 0, 0),
+                                          child: ElevatedButton(
+                                            onPressed: () {
+                                              // Add your functionality here
+                                            },
+                                            style: ElevatedButton.styleFrom(
+                                              elevation: 10,
+                                              backgroundColor:
+                                                  Color(0xFF42F1A8),
+                                            ),
+                                            child: Text(
+                                              "All Tasks",
+                                              style: TextStyle(
+                                                  color: Colors.black),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                ],
-                              ),
-                              child: Column(
-                                crossAxisAlignment:
-                                CrossAxisAlignment.start,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.fromLTRB(
-                                        15, 20, 0, 20),
-                                    child: Align(
+                                ),
+                                Positioned(
+                                  top: 60,
+                                  right: 35,
+                                  child: SizedBox(
+                                    height: 120,
+                                    width: 120,
+                                    child: SfRadialGauge(
+                                      axes: <RadialAxis>[
+                                        RadialAxis(
+                                          minimum: 0,
+                                          maximum: 100,
+                                          showLabels: false,
+                                          showTicks: false,
+                                          axisLineStyle: AxisLineStyle(
+                                            thickness: 0.2,
+                                            cornerStyle: CornerStyle.bothCurve,
+                                            color: Colors.white,
+                                            thicknessUnit: GaugeSizeUnit.factor,
+                                          ),
+                                          pointers: [
+                                            RangePointer(
+                                              value: taskProgress ?? 0,
+                                              // Default to 0 if null
+                                              width: 14,
+                                              color: Colors.lightBlueAccent,
+                                              cornerStyle:
+                                                  CornerStyle.bothCurve,
+                                            )
+                                          ],
+                                          annotations: [
+                                            GaugeAnnotation(
+                                              widget: Text(
+                                                "${taskProgress?.toStringAsFixed(0) ?? '0'}%", // Default to '0%' if null
+                                                style: TextStyle(
+                                                  fontSize: 22,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 30),
+
+                            // Tasks Assigned By Section
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
+                              child: Container(
+                                child: Column(
+                                  children: [
+                                    Align(
                                       alignment: Alignment.centerLeft,
                                       child: Text(
-                                        "Today's Progress",
+                                        "Tasks Assigned By",
                                         style: TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 20,
                                         ),
                                       ),
                                     ),
-                                  ),
-                                  Row(
-                                    children: [
-                                      Padding(
-                                        padding:
-                                        const EdgeInsets.fromLTRB(
-                                            20, 0, 0, 0),
-                                        child: Container(
-                                          height: 30,
-                                          width: 50,
-                                          // margin: EdgeInsets.all(10),
-                                          decoration: BoxDecoration(
-                                            color: Color(0xFF42F1A8),
-                                            borderRadius:
-                                            BorderRadius.all(
-                                                Radius.circular(20)),
-                                          ),
-                                          child: Center(
-                                              child: Text(
-                                                  "$completedTasks/$totalTasks")),
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.only(
-                                            left: 10),
-                                        child: Text(
-                                          "Task",
-                                          style: TextStyle(
-                                            fontSize: 18,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.fromLTRB(
-                                        35, 10, 0, 10),
-                                    child: Text(
-                                      "You have marked $completedTasks/$totalTasks\ncompleted 🎉",
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.fromLTRB(
-                                        20, 0, 0, 0),
-                                    child: ElevatedButton(
-                                      onPressed: () {},
-                                      style: ElevatedButton.styleFrom(
-                                        elevation: 10,
-                                        backgroundColor:
-                                        Color(0xFF42F1A8),
-                                      ),
-                                      child: Text(
-                                        "All Tasks",
-                                        style: TextStyle(
-                                            color: Colors.black),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          Positioned(
-                            top: 60,
-                            right: 35,
-                            child: SizedBox(
-                              height: 120,
-                              width: 120,
-                              child: SfRadialGauge(axes: <RadialAxis>[
-                                RadialAxis(
-                                  minimum: 0,
-                                  maximum: 100,
-                                  showLabels: false,
-                                  showTicks: false,
-                                  axisLineStyle: AxisLineStyle(
-                                    thickness: 0.2,
-                                    cornerStyle: CornerStyle.bothCurve,
-                                    color: Colors.white,
-                                    thicknessUnit: GaugeSizeUnit.factor,
-                                  ),
-                                  pointers: [
-                                    RangePointer(
-                                      value: taskProgress,
-                                      width: 14,
-                                      color: Colors.lightBlueAccent,
-                                      cornerStyle: CornerStyle.bothCurve,
-                                    )
-                                  ],
-                                  annotations: [
-                                    GaugeAnnotation(
-                                      widget: Text(
-                                        "${taskProgress.toStringAsFixed(0)}%",
-                                        style: TextStyle(
-                                          fontSize: 22,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
+                                    SizedBox(height: 30),
+                                    ListView.builder(
+                                      padding: EdgeInsets.zero,
+                                      shrinkWrap: true,
+                                      itemCount: mngDataList.length,
+                                      itemBuilder: (context, index) {
+                                        final mngList = mngDataList.isNotEmpty
+                                            ? mngDataList[index]
+                                            : null;
+                                        if (mngList == null) {
+                                          return SizedBox
+                                              .shrink(); // Return an empty widget if data is null
+                                        }
+                                        return Utility().mngContainerUtil(
+                                          context,
+                                          mngList.mname ?? 'No Name',
+                                          mngList.memail ?? 'No Email',
+                                          mngList.mcontact ?? 'No Contact',
+                                          mngList.mimage ?? '',
+                                        );
+                                      },
                                     ),
                                   ],
                                 ),
-                              ]),
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 30,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
-                        child: Container(
-                          // color: Colors.red,
-                          child: Column(
-                            children: [
-                              Align(
-                                alignment: Alignment.centerLeft,
-                                child: Text(
-                                  "Tasks Assigned By",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 20),
-                                ),
-                              ),
-                              SizedBox(
-                                height: 30,
-                              ),
-                              ListView.builder(
-                                padding: EdgeInsets.zero,
-                                shrinkWrap: true,
-                                itemCount: mngDataList.length,
-                                itemBuilder: (context, index) {
-                                  final mngList = mngDataList[index];
-                                  return Utility().mngContainerUtil(
-                                      context,
-                                      mngList.mname!,
-                                      mngList.memail!,
-                                      mngList.mcontact!,
-                                      mngList.mimage ?? ""
-                                  );
-                                },
-                              ),
-                            ],
-                          ),
+                            SizedBox(height: 40),
+                          ],
                         ),
                       ),
-                      SizedBox(
-                        height: 40,
-                      ),
-                    ],
-                  ),
+                    );
+                  },
                 ),
-              );
-            },
-          ),
-        ),
-      ),
+              ),
+            ),
     );
   }
 }
@@ -522,5 +615,9 @@ class EmpDashBloc extends Bloc<EmpDashEvent, EmpDashState> {
 abstract class EmpDashState {}
 
 class InitialState extends EmpDashState {}
+
+class LoadingState extends EmpDashState {}
+
+class LoadedState extends EmpDashState {}
 
 abstract class EmpDashEvent {}

@@ -9,7 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:inter_business_comm_system/Database.dart';
+import 'package:inter_business_comm_system/Database/Database.dart';
 import 'package:inter_business_comm_system/ProjectUtils/Utilities.dart';
 
 
@@ -122,7 +122,7 @@ class _SignupScreenState extends State<SignupScreen> {
                 Utility().showSnackbarUtil(context, "Enter Valid Details");
               }
               if (state is LoginState) {
-                Navigator.pushNamed(context, "/LoginScreen");
+                Navigator.pushReplacementNamed(context, "/LoginScreen");
               }
               if (state is SignSuccess) {
                 if (isManager) {
@@ -142,7 +142,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       Utility().showSnackbarUtil(context, "Copied");
                     });
                   });
-                  Navigator.pushNamed(context, "/LoginScreen");
+                  Navigator.pushReplacementNamed(context, "/LoginScreen");
                 } else {
                   String emp_id = await generateUniqueId(isManager);
                   AppDataBase().addEmployeeData(
@@ -160,7 +160,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       Utility().showSnackbarUtil(context, "Copied");
                     });
                   });
-                  Navigator.pushNamed(context, "/LoginScreen");
+                  Navigator.pushReplacementNamed(context, "/LoginScreen");
                 }
               }
             },
