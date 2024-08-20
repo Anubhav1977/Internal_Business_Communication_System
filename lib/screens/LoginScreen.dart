@@ -23,8 +23,8 @@ class _LoginScreenState extends State<LoginScreen> {
   final idController = TextEditingController();
   final passwordController = TextEditingController();
   bool isManager = false;
-  bool isSelected = false; // "Remember Me" checkbox
-  bool isObscure = true;
+  bool isSelected = false;
+  bool isobscure = true;
 
   @override
   Widget build(BuildContext context) {
@@ -38,14 +38,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 Utility().showSnackbarUtil(context, "Enter Valid Details");
               }
               if (state is LoginSuccess) {
-                // Save login details if "Remember Me" is checked
-                if (isSelected) {
-                  SharedPref().setLoginData('isLogin', true);
-                  SharedPref().setLoginData('isManager', isManager);
-                } else {
-                  SharedPref().setLoginData('isLogin', false);
-                }
-
                 if (isManager) {
                   Navigator.pushNamed(context, "/ManagerDashboard",
                       arguments: state.id);
@@ -84,8 +76,10 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         Align(
                           alignment: Alignment.centerLeft,
-                          child: Text("Please Login to Continue",
-                              style: TextStyle(fontSize: 16)),
+                          child: Text(
+                            "Please Login to Continue",
+                            style: TextStyle(fontSize: 16),
+                          ),
                         ),
                         Container(
                           height: MediaQuery.of(context).size.height * 0.26,
@@ -94,18 +88,22 @@ class _LoginScreenState extends State<LoginScreen> {
                             image: DecorationImage(
                               fit: BoxFit.contain,
                               image: NetworkImage(
-                                  "https://img.freepik.com/free-vector/mobile-login-concept-illustration_114360-83.jpg"),
+                                  "https://img.freepik.com/free-vector/mobile-login-concept-illustration_114360-83.jpg?size=338&ext=jpg&ga=GA1.1.2008272138.1723248000&semt=ais_hybrid"),
                             ),
                           ),
                         ),
-                        Text("Enter Via Socials",
-                            style: TextStyle(fontSize: 16)),
+                        Text(
+                          "Enter Via Socials",
+                          style: TextStyle(fontSize: 16),
+                        ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Utility().socialButtonUtil(
                                 context, FontAwesomeIcons.google),
-                            SizedBox(width: 10),
+                            SizedBox(
+                              width: 10,
+                            ),
                             Utility().socialButtonUtil(
                                 context, FontAwesomeIcons.twitter),
                           ],
@@ -113,23 +111,38 @@ class _LoginScreenState extends State<LoginScreen> {
                         Row(
                           children: [
                             Expanded(
-                              child: Divider(color: Colors.black),
+                              child: Divider(
+                                color: Colors.black,
+                              ),
                             ),
-                            SizedBox(width: 5),
+                            SizedBox(
+                              width: 5,
+                            ),
                             Column(
                               children: [
-                                Text("or Log in with",
-                                    style: TextStyle(fontSize: 16)),
-                                Text("Email", style: TextStyle(fontSize: 16)),
+                                Text(
+                                  "or Log in with",
+                                  style: TextStyle(fontSize: 16),
+                                ),
+                                Text(
+                                  "Email",
+                                  style: TextStyle(fontSize: 16),
+                                ),
                               ],
                             ),
-                            SizedBox(width: 5),
+                            SizedBox(
+                              width: 5,
+                            ),
                             Expanded(
-                              child: Divider(color: Colors.black),
+                              child: Divider(
+                                color: Colors.black,
+                              ),
                             ),
                           ],
                         ),
-                        SizedBox(height: 5),
+                        SizedBox(
+                          height: 5,
+                        ),
                         Form(
                           autovalidateMode: AutovalidateMode.onUserInteraction,
                           key: _key,
@@ -158,21 +171,21 @@ class _LoginScreenState extends State<LoginScreen> {
                                   Row(
                                     children: [
                                       Checkbox(
-                                        shape: CircleBorder(),
-                                        activeColor:
-                                            Theme.of(context).primaryColor,
-                                        value: isSelected,
-                                        onChanged: (bool? value) async {
-                                          setState(() {
-                                            isSelected = value!;
-                                          });
-                                          print(isSelected);
-                                        },
+                                          shape: CircleBorder(),
+                                          activeColor:
+                                              Theme.of(context).primaryColor,
+                                          value: isSelected,
+                                          onChanged: (bool? value) async {
+                                            setState(() {
+                                              isSelected = value!;
+                                            });
+                                          }),
+                                      Text(
+                                        "Remember Me",
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold),
                                       ),
-                                      Text("Remember Me",
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold)),
                                     ],
                                   ),
                                   TextButton(
@@ -181,11 +194,13 @@ class _LoginScreenState extends State<LoginScreen> {
                                           .read<LoginBloc>()
                                           .add(ForgotpassEvent());
                                     },
-                                    child: Text("Forgot Password?",
-                                        style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold)),
+                                    child: Text(
+                                      "Forgot Password?",
+                                      style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold),
+                                    ),
                                   ),
                                 ],
                               ),
@@ -211,25 +226,30 @@ class _LoginScreenState extends State<LoginScreen> {
                                 });
                               },
                               styleBuilder: (value) => ToggleStyle(
-                                backgroundColor: Color(0xFFEBF8F1),
-                                indicatorColor: value
-                                    ? Colors.greenAccent
-                                    : Colors.redAccent,
-                              ),
+                                  backgroundColor: Color(0xFFEBF8F1),
+                                  indicatorColor: value
+                                      ? Colors.greenAccent
+                                      : Colors.redAccent),
                               iconBuilder: (value) => value
                                   ? Icon(Icons.person)
                                   : Icon(Icons.business_center_outlined),
                               textBuilder: (value) => value
-                                  ? Text("As Employee",
+                                  ? Text(
+                                      "As Employee",
                                       style: TextStyle(
-                                          fontWeight: FontWeight.bold))
-                                  : Text("As Manager",
+                                          fontWeight: FontWeight.bold),
+                                    )
+                                  : Text(
+                                      "As Manager",
                                       style: TextStyle(
-                                          fontWeight: FontWeight.bold)),
+                                          fontWeight: FontWeight.bold),
+                                    ),
                             ),
                           ),
                         ),
-                        SizedBox(height: 10),
+                        SizedBox(
+                          height: 10,
+                        ),
                         SizedBox(
                           width: MediaQuery.of(context).size.width,
                           height: 50,
@@ -249,34 +269,40 @@ class _LoginScreenState extends State<LoginScreen> {
                               }
                             },
                             style: ElevatedButton.styleFrom(
-                              elevation: 5,
-                              backgroundColor: Theme.of(context).primaryColor,
-                              shape: RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10)),
-                              ),
+                                elevation: 5,
+                                backgroundColor: Theme.of(context).primaryColor,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(10),
+                                  ),
+                                )),
+                            child: Text(
+                              "Log in",
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold),
                             ),
-                            child: Text("Log in",
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold)),
                           ),
                         ),
                         Row(
                           children: [
-                            Text("Don't have an account?",
-                                style: TextStyle(
-                                    fontSize: 16, fontWeight: FontWeight.bold)),
+                            Text(
+                              "Don't have an account?",
+                              style: TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.bold),
+                            ),
                             TextButton(
                               onPressed: () {
                                 context.read<LoginBloc>().add(SignupEvent());
                               },
-                              child: Text("Sign up",
-                                  style: TextStyle(
-                                      color: Theme.of(context).primaryColor,
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold)),
+                              child: Text(
+                                "Sign up",
+                                style: TextStyle(
+                                    color: Theme.of(context).primaryColor,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold),
+                              ),
                             ),
                           ],
                         ),

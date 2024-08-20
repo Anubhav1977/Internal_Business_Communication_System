@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:inter_business_comm_system/screens/AllTasksScreen.dart';
 import 'package:inter_business_comm_system/screens/EmployeeDashboard.dart';
 import 'package:inter_business_comm_system/screens/HomeScreen.dart';
 import 'package:inter_business_comm_system/screens/LoginScreen.dart';
@@ -49,16 +50,17 @@ class _MyAppState extends State<MyApp> {
       cardColor: Color(0xFF785B53),
     );
     return MaterialApp(
-      theme: lightTheme,
+      theme: lightTheme, 
       routes: {
         "/HomeScreen": (context) => HomeScreen(),
         "/LoginScreen": (context) => LoginScreen(),
         "/SignupScreen": (context) => SignupScreen(),
         "/EmployeeDashboard": (context) => EmployeeDashboard(),
         "/ManagerDashboard": (context) => ManagerDashboard(),
+        "/TasksScreen": (context) => TasksScreen(),
       },
       debugShowCheckedModeBanner: false,
-      home: LoginScreen(),
+      home: HomeScreen(),
     );
   }
 }

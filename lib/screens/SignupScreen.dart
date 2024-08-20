@@ -122,7 +122,7 @@ class _SignupScreenState extends State<SignupScreen> {
                 Utility().showSnackbarUtil(context, "Enter Valid Details");
               }
               if (state is LoginState) {
-                Navigator.pushReplacementNamed(context, "/LoginScreen");
+                Navigator.pushNamed(context, "/LoginScreen");
               }
               if (state is SignSuccess) {
                 if (isManager) {
@@ -142,7 +142,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       Utility().showSnackbarUtil(context, "Copied");
                     });
                   });
-                  Navigator.pushReplacementNamed(context, "/LoginScreen");
+                  Navigator.pushNamed(context, "/LoginScreen");
                 } else {
                   String emp_id = await generateUniqueId(isManager);
                   AppDataBase().addEmployeeData(
@@ -160,7 +160,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       Utility().showSnackbarUtil(context, "Copied");
                     });
                   });
-                  Navigator.pushReplacementNamed(context, "/LoginScreen");
+                  Navigator.pushNamed(context, "/LoginScreen");
                 }
               }
             },

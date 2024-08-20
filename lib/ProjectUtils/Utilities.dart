@@ -18,7 +18,7 @@ class Utility {
       String errormsg,
       String exp,
       {bool isSuffix = false,
-        TextInputType textinput = TextInputType.text}) {
+      TextInputType textinput = TextInputType.text}) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
       child: TextFormField(
@@ -29,7 +29,7 @@ class Utility {
             suffixIcon: isSuffix ? Icon(Icons.remove_red_eye) : null,
             focusedBorder: OutlineInputBorder(
                 borderSide:
-                BorderSide(width: 2, color: Theme.of(context).primaryColor),
+                    BorderSide(width: 2, color: Theme.of(context).primaryColor),
                 borderRadius: BorderRadius.all(Radius.circular(10))),
             border: OutlineInputBorder(
                 borderSide: BorderSide(color: Theme.of(context).primaryColor),
@@ -88,19 +88,19 @@ class Utility {
         backgroundColor: Colors.red,
         action: isActionButton
             ? SnackBarAction(
-            label: label!, textColor: Colors.black, onPressed: onPressed!)
+                label: label!, textColor: Colors.black, onPressed: onPressed!)
             : null,
       ));
   }
 
   Widget taskContainerUtil(
-      BuildContext context,
-      String taskTitle,
-      String taskDes,
-      String taskStatus,
-      String taskAssigedby,
-      VoidCallback onSubmit,
-      ) {
+    BuildContext context,
+    String taskTitle,
+    String taskDes,
+    String taskStatus,
+    String taskAssigedby,
+    VoidCallback onSubmit,
+  ) {
     return Padding(
       padding: const EdgeInsets.only(right: 10, left: 15),
       child: Container(
@@ -109,8 +109,8 @@ class Utility {
         margin: EdgeInsets.only(top: 5, bottom: 15),
         decoration: BoxDecoration(
           color:
-          taskStatus == "pending" ? Color(0xFF789FCB) : Color(0xFF42F1A8),
-          border: Border.all(width: 2, color: Colors.blue.shade200),
+              taskStatus == "pending" ? Color(0xFF789FCB) : Color(0xFF42F1A8),
+          border: Border.all(width: 2, color: Colors.black26),
           borderRadius: BorderRadius.all(
             Radius.circular(20),
           ),
@@ -149,7 +149,7 @@ class Utility {
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         color:
-                        taskStatus == "pending" ? Colors.red : Colors.green,
+                            taskStatus == "pending" ? Colors.red : Colors.green,
                         fontSize: 18,
                       ),
                     ),
@@ -176,107 +176,40 @@ class Utility {
                           content: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Padding(
-                                padding: const EdgeInsets.only(bottom: 15),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    color: Color(0xFFD8E7F8),
-                                    border: Border.all(
-                                      width: 1,
-                                      color: Colors.blueAccent.shade200,
-                                    ),
-                                    borderRadius:
-                                    BorderRadius.all(Radius.circular(20)),
-                                  ),
-                                  padding: EdgeInsets.all(12),
-                                  child: RichText(
-                                    text: TextSpan(
-                                      children: [
-                                        TextSpan(
-                                          text: "Title: ",
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.black,
-                                            fontSize: 16,
-                                          ),
-                                        ),
-                                        TextSpan(
-                                          text: taskTitle,
-                                          style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 16,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
+                              taskDetailsConatiner(
+                                  "Manager Id", "$taskAssigedby"),
+                              taskDetailsConatiner("Title", "$taskTitle"),
+                              taskDetailsConatiner("Description", "$taskDes"),
+                              if (taskStatus == 'pending')
+                                Container(
+                                  padding: EdgeInsets.symmetric(vertical: 20),
+                                  child: SlideAction(
+                                      text: "   Mark as Completed",
+                                      textStyle: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
+                                      ),
+                                      innerColor: Colors.blueAccent,
+                                      outerColor: Colors.blueAccent.shade100,
+                                      sliderButtonIcon: Icon(
+                                        Icons.arrow_forward,
+                                        color: Colors.white,
+                                      ),
+                                      submittedIcon: Icon(
+                                        Icons.check,
+                                        color: Colors.white,
+                                      ),
+                                      onSubmit: () async {
+                                        try {
+                                          print("Swipe action triggered");
+                                          onSubmit(); // Call the provided onSubmit callback
+                                          print("Status update requested");
+                                        } catch (e) {
+                                          print("Error in swipe action: $e");
+                                        }
+                                      }),
                                 ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(bottom: 15),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    color: Color(0xFFD8E7F8),
-                                    border: Border.all(
-                                      width: 1,
-                                      color: Colors.blueAccent.shade200,
-                                    ),
-                                    borderRadius:
-                                    BorderRadius.all(Radius.circular(20)),
-                                  ),
-                                  padding: EdgeInsets.all(12),
-                                  child: RichText(
-                                    text: TextSpan(
-                                      children: [
-                                        TextSpan(
-                                          text: "Description: ",
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.black,
-                                            fontSize: 16,
-                                          ),
-                                        ),
-                                        TextSpan(
-                                          text: taskDes,
-                                          style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 16,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Container(
-                                padding: EdgeInsets.symmetric(vertical: 20),
-                                child: SlideAction(
-                                    text: "   Mark as Completed",
-                                    textStyle: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16,
-                                    ),
-                                    innerColor: Colors.blueAccent,
-                                    outerColor: Colors.blueAccent.shade100,
-                                    sliderButtonIcon: Icon(
-                                      Icons.arrow_forward,
-                                      color: Colors.white,
-                                    ),
-                                    submittedIcon: Icon(
-                                      Icons.check,
-                                      color: Colors.white,
-                                    ),
-                                    onSubmit: () async {
-                                      try {
-                                        print("Swipe action triggered");
-                                        onSubmit(); // Call the provided onSubmit callback
-                                        print("Status update requested");
-                                      } catch (e) {
-                                        print("Error in swipe action: $e");
-                                      }
-                                    }),
-                              ),
                             ],
                           ),
                         );
@@ -300,13 +233,202 @@ class Utility {
     );
   }
 
+  Widget totalContainerUtil(
+    BuildContext context,
+    String taskTitle,
+    String taskDes,
+    String taskStatus,
+    String taskAssigedby,
+    VoidCallback onSubmit,
+  ) {
+    return Padding(
+      padding: const EdgeInsets.only(right: 10, left: 15),
+      child: Container(
+        width: MediaQuery.of(context).size.width * 0.43,
+        // height: MediaQuery.of(context).size.height * 0.1,
+        padding: EdgeInsets.fromLTRB(5, 0, 5, 15),
+        margin: EdgeInsets.only(top: 5, bottom: 15),
+        decoration: BoxDecoration(
+          color: taskStatus == "pending"
+              ? Colors.red.withOpacity(0.6)
+              : Color(0xFF42F1A8),
+          border: Border.all(width: 2, color: Colors.black26),
+          borderRadius: BorderRadius.all(
+            Radius.circular(20),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.3),
+              spreadRadius: 2,
+              blurRadius: 8,
+              offset: Offset(-2, 4),
+            ),
+          ],
+        ),
+        child: Stack(
+          children: [
+            Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(12, 18, 12, 0),
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
+                    child: Text(
+                      taskTitle,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                      ),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(12, 18, 12, 0),
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
+                    child: Text(
+                      taskDes,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w400,
+                        fontSize: 18,
+                      ),
+                    ),
+                  ),
+                ),
+                if (taskStatus == 'completed')
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(12, 0, 12, 0),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        taskStatus,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: taskStatus == "pending"
+                              ? Colors.red
+                              : Colors.green,
+                          fontSize: 18,
+                        ),
+                      ),
+                    ),
+                  ),
+                if (taskStatus == 'pending')
+                  Container(
+                    padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+                    child: SlideAction(
+                        text: "   Mark as Completed",
+                        textStyle: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                        innerColor: Colors.green,
+                        // Use a primary green color for the inner color
+                        outerColor: Colors.green.shade100,
+                        // Use a lighter green color for the outer color
+                        sliderButtonIcon: Icon(
+                          Icons.arrow_forward,
+                          color: Colors.white,
+                        ),
+                        submittedIcon: Icon(
+                          Icons.check,
+                          color: Colors.white,
+                        ),
+                        onSubmit: () async {
+                          try {
+                            print("Swipe action triggered");
+                            onSubmit(); // Call the provided onSubmit callback
+                            print("Status update requested");
+                          } catch (e) {
+                            print("Error in swipe action: $e");
+                          }
+                        }),
+                  ),
+              ],
+            ),
+            // Positioned(
+            //   bottom: 10,
+            //   right: 15,
+            //   child: IconButton(
+            //     onPressed: () {
+            //       showDialog(
+            //           context: context,
+            //           builder: (context) {
+            //             return AlertDialog(
+            //               title: Text(
+            //                 "Update Task Status",
+            //                 style: TextStyle(
+            //                   fontWeight: FontWeight.bold,
+            //                   fontSize: 18,
+            //                 ),
+            //               ),
+            //               content: Column(
+            //                 mainAxisSize: MainAxisSize.min,
+            //                 children: [
+            //                   taskDetailsConatiner(
+            //                       "Manager Id", "$taskAssigedby"),
+            //                   taskDetailsConatiner("Title", "$taskTitle"),
+            //                   taskDetailsConatiner("Description", "$taskDes"),
+            //                   if (taskStatus == 'pending')
+            //                     Container(
+            //                       padding: EdgeInsets.symmetric(vertical: 20),
+            //                       child: SlideAction(
+            //                           text: "   Mark as Completed",
+            //                           textStyle: TextStyle(
+            //                             color: Colors.white,
+            //                             fontWeight: FontWeight.bold,
+            //                             fontSize: 16,
+            //                           ),
+            //                           innerColor: Colors.blueAccent,
+            //                           outerColor: Colors.blueAccent.shade100,
+            //                           sliderButtonIcon: Icon(
+            //                             Icons.arrow_forward,
+            //                             color: Colors.white,
+            //                           ),
+            //                           submittedIcon: Icon(
+            //                             Icons.check,
+            //                             color: Colors.white,
+            //                           ),
+            //                           onSubmit: () async {
+            //                             try {
+            //                               print("Swipe action triggered");
+            //                               onSubmit(); // Call the provided onSubmit callback
+            //                               print("Status update requested");
+            //                             } catch (e) {
+            //                               print("Error in swipe action: $e");
+            //                             }
+            //                           }),
+            //                     ),
+            //                 ],
+            //               ),
+            //             );
+            //           });
+            //       // Navigator.push(context, MaterialPageRoute(builder: (context) => PendingScreen(id: "emp_id024",)));
+            //     },
+            //     icon: CircleAvatar(
+            //       radius: 15,
+            //       backgroundColor: Color(0xFFD8E7F8),
+            //       child: Icon(
+            //         // color: ,
+            //         Icons.arrow_forward_ios_rounded,
+            //         size: 15,
+            //       ),
+            //     ),
+            //   ),
+            // ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget mngContainerUtil(
-      BuildContext context,
-      String mngName,
-      String mngEmail,
-      String mngContact,
-      String mngImage,
-      ) {
+    BuildContext context,
+    String mngName,
+    String mngEmail,
+    String mngContact,
+    String mngImage,
+  ) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(15, 0, 15, 15),
       child: Container(
@@ -335,9 +457,10 @@ class Utility {
                 border: Border.all(color: Colors.black),
                 image: DecorationImage(
                   fit: BoxFit.cover,
-                  image: mngImage != "" ?
-                  FileImage(File(mngImage)):
-                  NetworkImage("https://img.freepik.com/free-psd/3d-illustration-person-with-sunglasses_23-2149436188.jpg?size=338&ext=jpg&ga=GA1.1.2008272138.1723593600&semt=ais_hybrid"),
+                  image: mngImage != ""
+                      ? FileImage(File(mngImage))
+                      : NetworkImage(
+                          "https://img.freepik.com/free-psd/3d-illustration-person-with-sunglasses_23-2149436188.jpg?size=338&ext=jpg&ga=GA1.1.2008272138.1723593600&semt=ais_hybrid"),
                 ),
               ),
             ),
@@ -419,6 +542,47 @@ class Utility {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class MngUtilties {
+  Widget taskInfoConatainersUtil(
+      BuildContext context, Color color, String tasks, String title) {
+    return Container(
+      height: MediaQuery.of(context).size.height * 0.14,
+      width: MediaQuery.of(context).size.width * 0.4,
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.all(
+            Radius.circular(20),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.3),
+              spreadRadius: 2,
+              blurRadius: 8,
+              offset: Offset(-2, 4),
+            ),
+          ],
+          color: color),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text(
+            tasks,
+            style: TextStyle(
+                fontSize: 24, color: Colors.white, fontWeight: FontWeight.bold),
+          ),
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 15,
+              color: Colors.white,
+            ),
+          )
+        ],
       ),
     );
   }

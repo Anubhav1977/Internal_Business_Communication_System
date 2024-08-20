@@ -8,7 +8,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:inter_business_comm_system/ProjectUtils/Utilities.dart';
 import 'package:inter_business_comm_system/services/Employeeservice.dart';
 import 'package:inter_business_comm_system/services/Managerservice.dart';
+import 'package:liquid_progress_indicator_v2/liquid_progress_indicator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 import '../Database/Database.dart';
@@ -178,38 +180,68 @@ class _EmployeeDashboardState extends State<EmployeeDashboard> {
                 color: Colors.green, // Background color for DrawerHeader
               ),
               child: Center(
-                child: UserAccountsDrawerHeader(
-                  decoration: BoxDecoration(color: Colors.green),
-                  // Background color for UserAccountsDrawerHeader
-                  accountName: Text(
-                    empName ?? 'Name Not Available',
-                    // Fallback text if empName is null
-                    style: TextStyle(fontSize: 15),
-                  ),
-                  accountEmail: Text(
-                    empDataList.isNotEmpty && empDataList.first.email != null
-                        ? empDataList.first.email!
-                        : 'Email Not Available', // Fallback text if email is null or list is empty
-                  ),
-                  currentAccountPictureSize: Size.square(50),
-                  // Size of the profile picture
-                  currentAccountPicture: CircleAvatar(
-                    backgroundColor: Color.fromARGB(255, 165, 255, 137),
-                    // Background color for the CircleAvatar
-                    backgroundImage: empDataList.isNotEmpty &&
-                            empDataList.first.image != null
-                        ? FileImage(File(empDataList.first.image!))
-                        : null,
-                    // Use FileImage if image is available
-                    child: empDataList.isNotEmpty &&
-                            empDataList.first.image == null
-                        ? Icon(
-                            Icons.person,
-                            color: Colors.white, // Default icon color
-                          )
-                        : null, // Use default icon if image is null
-                  ),
+                child: Column(
+                  children: [
+                    CircleAvatar(
+                      radius: 40,
+                      backgroundColor: Color.fromARGB(255, 165, 255, 137),
+                      backgroundImage: empDataList.isNotEmpty &&
+                              empDataList.first.image != null
+                          ? FileImage(File(empDataList.first.image!))
+                          : null,
+                      child: empDataList.isNotEmpty &&
+                              empDataList.first.image == null
+                          ? Icon(
+                              size: 35,
+                              Icons.person_outlined,
+                              color: Colors.black,
+                            )
+                          : null,
+                    ),
+                    Text(
+                      empName ?? 'Name Not Available',
+                      // Fallback text if empName is null
+                      style: TextStyle(fontSize: 15),
+                    ),
+                    Text(
+                      empDataList.isNotEmpty && empDataList.first.email != null
+                          ? empDataList.first.email!
+                          : 'Email Not Available', // Fallback text if email is null or list is empty
+                    ),
+                  ],
                 ),
+                // child: UserAccountsDrawerHeader(
+                //   decoration: BoxDecoration(color: Colors.green),
+                //   // Background color for UserAccountsDrawerHeader
+                //   accountName: Text(
+                //     empName ?? 'Name Not Available',
+                //     // Fallback text if empName is null
+                //     style: TextStyle(fontSize: 15),
+                //   ),
+                //   accountEmail: Text(
+                //     empDataList.isNotEmpty && empDataList.first.email != null
+                //         ? empDataList.first.email!
+                //         : 'Email Not Available', // Fallback text if email is null or list is empty
+                //   ),
+                //   currentAccountPictureSize: Size.square(50),
+                //   // Size of the profile picture
+                //   currentAccountPicture: CircleAvatar(
+                //     backgroundColor: Color.fromARGB(255, 165, 255, 137),
+                //     // Background color for the CircleAvatar
+                //     backgroundImage: empDataList.isNotEmpty &&
+                //             empDataList.first.image != null
+                //         ? FileImage(File(empDataList.first.image!))
+                //         : null,
+                //     // Use FileImage if image is available
+                //     child: empDataList.isNotEmpty &&
+                //             empDataList.first.image == null
+                //         ? Icon(
+                //             Icons.person,
+                //             color: Colors.white, // Default icon color
+                //           )
+                //         : null, // Use default icon if image is null
+                //   ),
+                // ),
               ),
             ),
 
@@ -245,12 +277,12 @@ class _EmployeeDashboardState extends State<EmployeeDashboard> {
               title: const Text('LogOut'),
               onTap: () async {
                 // Clear user session data from SharedPreferences
-                final SharedPreferences prefs =
-                    await SharedPreferences.getInstance();
-                await prefs.setBool('isLogin', false);
-                await prefs.setBool('isManager', false);
-
-                // Navigate back to HomeScreen and remove all previous routes
+                // final SharedPreferences prefs =
+                //     await SharedPreferences.getInstance();
+                // await prefs.setBool('isLogin', false);
+                // await prefs.setBool('isManager', false);
+                //
+                // // Navigate back to HomeScreen and remove all previous routes
                 Navigator.pushNamedAndRemoveUntil(
                     context, '/LoginScreen', (route) => false);
               },
@@ -259,7 +291,52 @@ class _EmployeeDashboardState extends State<EmployeeDashboard> {
         ),
       ),
       body: isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? Center(
+              child: SizedBox(
+                height: 100,
+                width: 100,
+                child: LiquidCircularProgressIndicator(
+                  value: 0.80,
+                  valueColor: AlwaysStoppedAnimation(Colors.pink),
+                  backgroundColor: Colors.white,
+                  borderColor: Colors.black,
+                  borderWidth: 5.0,
+                  direction: Axis.vertical,
+                  center: Text(
+                    "Loading..",
+                    style: TextStyle(color: Colors.cyanAccent),
+                  ),
+                ),
+              ),
+            )
+          // ? Container(
+          //     color: Colors.black.withOpacity(0.5),
+          //     child: const Center(
+          //       child: Align(
+          //         alignment: Alignment.center,
+          //         child: LinearProgressIndicator(
+          //           backgroundColor: Colors.black,
+          //           valueColor: AlwaysStoppedAnimation<Color>(Colors.red),
+          //         ),
+          //       ),
+          //     ),
+          //   )
+          // ? Shimmer.fromColors(
+          //     baseColor: Colors.grey[300]!,
+          //     highlightColor: Colors.grey[500]!,
+          //     child: ListView.builder(
+          //       itemCount: 5,
+          //       itemBuilder: (context, index) {
+          //         return ListTile(
+          //           title: Container(
+          //             height: MediaQuery.of(context).size.height * 0.2,
+          //             width: MediaQuery.of(context).size.width,
+          //             color: Colors.white,
+          //           ),
+          //         );
+          //       },
+          //     ),
+          //   )
           : SafeArea(
               child: BlocProvider<EmpDashBloc>(
                 create: (context) => EmpDashBloc(),
@@ -334,7 +411,9 @@ class _EmployeeDashboardState extends State<EmployeeDashboard> {
                                         ),
                                         TextButton(
                                           onPressed: () {
-                                            // Navigator.
+                                            Navigator.pushNamed(
+                                                context, '/TasksScreen',
+                                                arguments: id);
                                           },
                                           child: Text(
                                             "Show all",
@@ -476,8 +555,10 @@ class _EmployeeDashboardState extends State<EmployeeDashboard> {
                                         ),
                                         Padding(
                                           padding: const EdgeInsets.fromLTRB(
-                                              35, 10, 0, 10),
+                                              35, 10, 180, 10),
                                           child: Text(
+                                            maxLines: 2,
+                                            softWrap: true,
                                             "You have marked $completedTasks/$totalTasks completed 🎉",
                                           ),
                                         ),
@@ -486,7 +567,9 @@ class _EmployeeDashboardState extends State<EmployeeDashboard> {
                                               20, 0, 0, 0),
                                           child: ElevatedButton(
                                             onPressed: () {
-                                              // Add your functionality here
+                                              Navigator.pushNamed(
+                                                  context, '/TasksScreen',
+                                                  arguments: id);
                                             },
                                             style: ElevatedButton.styleFrom(
                                               elevation: 10,
@@ -536,7 +619,8 @@ class _EmployeeDashboardState extends State<EmployeeDashboard> {
                                           annotations: [
                                             GaugeAnnotation(
                                               widget: Text(
-                                                "${taskProgress?.toStringAsFixed(0) ?? '0'}%", // Default to '0%' if null
+                                                "${taskProgress?.toStringAsFixed(0) ?? '0'}%",
+                                                // Default to '0%' if null
                                                 style: TextStyle(
                                                   fontSize: 22,
                                                   fontWeight: FontWeight.bold,
