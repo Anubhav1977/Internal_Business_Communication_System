@@ -23,7 +23,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final idController = TextEditingController();
   final passwordController = TextEditingController();
   bool isManager = false;
-  bool isSelected = false;
+  bool _remeberMe = false;
   bool isobscure = true;
 
   @override
@@ -41,13 +41,31 @@ class _LoginScreenState extends State<LoginScreen> {
                 if (isManager) {
                   Navigator.pushNamed(context, "/ManagerDashboard",
                       arguments: state.id);
+                  if (_remeberMe) {
+                    SharedPref().setLoginData('role', 'Manager');
+                    SharedPref().setLoginData('id', state.id!);
+                    SharedPref().setLoginRole('isLoggedIn', true);
+                  } else {
+                    SharedPref().removeData('role');
+                    SharedPref().removeData('id');
+                    SharedPref().removeData('isLoggedIn');
+                  }
                 } else {
                   Navigator.pushNamed(context, "/EmployeeDashboard",
                       arguments: state.id);
+                  if (_remeberMe) {
+                    SharedPref().setLoginData('role', 'Employee');
+                    SharedPref().setLoginData('id', state.id!);
+                    SharedPref().setLoginRole('isLoggedIn', true);
+                  } else {
+                    SharedPref().removeData('role');
+                    SharedPref().removeData('id');
+                    SharedPref().removeData('isLoggedIn');
+                  }
                 }
               }
               if (state is SignupState) {
-                Navigator.pushNamed(context, "/SignupScreen");
+                Navigator.pushReplacementNamed(context, "/SignupScreen");
               }
               if (state is ForgotpassState) {
                 Utility().showSnackbarUtil(context, "Reset your Password",
@@ -174,10 +192,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                           shape: CircleBorder(),
                                           activeColor:
                                               Theme.of(context).primaryColor,
-                                          value: isSelected,
+                                          value: _remeberMe,
                                           onChanged: (bool? value) async {
                                             setState(() {
-                                              isSelected = value!;
+                                              _remeberMe = value!;
                                             });
                                           }),
                                       Text(

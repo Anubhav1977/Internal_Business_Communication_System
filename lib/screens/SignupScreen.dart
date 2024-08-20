@@ -122,7 +122,7 @@ class _SignupScreenState extends State<SignupScreen> {
                 Utility().showSnackbarUtil(context, "Enter Valid Details");
               }
               if (state is LoginState) {
-                Navigator.pushNamed(context, "/LoginScreen");
+                Navigator.pushReplacementNamed(context, "/LoginScreen");
               }
               if (state is SignSuccess) {
                 if (isManager) {

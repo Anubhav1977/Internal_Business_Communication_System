@@ -5,18 +5,21 @@ import 'dart:io';
 import 'package:easy_date_timeline/easy_date_timeline.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:inter_business_comm_system/Database/SharedPref.dart';
 import 'package:inter_business_comm_system/ProjectUtils/Utilities.dart';
 import 'package:inter_business_comm_system/services/Employeeservice.dart';
 import 'package:inter_business_comm_system/services/Managerservice.dart';
 import 'package:liquid_progress_indicator_v2/liquid_progress_indicator.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:shimmer/shimmer.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 import '../Database/Database.dart';
 import '../services/taskservice.dart';
 
 class EmployeeDashboard extends StatefulWidget {
+  String? id;
+
+  EmployeeDashboard(this.id);
+
   @override
   State<EmployeeDashboard> createState() => _EmployeeDashboardState();
 }
@@ -43,14 +46,27 @@ class _EmployeeDashboardState extends State<EmployeeDashboard> {
     // TODO: implement initState
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final routeargs = ModalRoute.of(context)!.settings.arguments;
-      if (routeargs is String) {
-        id = routeargs;
-        fetchData();
-      } else {
-        print("$id");
-      }
+      _initializeId();
     });
+  }
+
+  void _initializeId() {
+    if (widget.id != null) {
+      setState(() {
+        id = widget.id;
+      });
+      fetchData();
+      return;
+    }
+
+    final routeargs = ModalRoute.of(context)!.settings.arguments;
+    if (routeargs is String) {
+      setState(() {
+        id = routeargs;
+      });
+      fetchData();
+      return;
+    }
   }
 
   // Method to update the task status in the database
@@ -276,13 +292,10 @@ class _EmployeeDashboardState extends State<EmployeeDashboard> {
               leading: const Icon(Icons.logout),
               title: const Text('LogOut'),
               onTap: () async {
-                // Clear user session data from SharedPreferences
-                // final SharedPreferences prefs =
-                //     await SharedPreferences.getInstance();
-                // await prefs.setBool('isLogin', false);
-                // await prefs.setBool('isManager', false);
-                //
-                // // Navigate back to HomeScreen and remove all previous routes
+                await SharedPref().removeData('role');
+                await SharedPref().removeData('id');
+                await SharedPref().removeData('isLoggedIn');
+                // Navigate back to HomeScreen and remove all previous routes
                 Navigator.pushNamedAndRemoveUntil(
                     context, '/LoginScreen', (route) => false);
               },
@@ -395,35 +408,15 @@ class _EmployeeDashboardState extends State<EmployeeDashboard> {
                                 padding: EdgeInsets.only(bottom: 10),
                                 child: Column(
                                   children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Align(
-                                          alignment: Alignment.centerLeft,
-                                          child: Text(
-                                            "Today's Tasks",
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 20,
-                                            ),
-                                          ),
+                                    Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(
+                                        "Today's Tasks",
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 20,
                                         ),
-                                        TextButton(
-                                          onPressed: () {
-                                            Navigator.pushNamed(
-                                                context, '/TasksScreen',
-                                                arguments: id);
-                                          },
-                                          child: Text(
-                                            "Show all",
-                                            style: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 15,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
+                                      ),
                                     ),
                                     SizedBox(height: 5),
                                     Container(
